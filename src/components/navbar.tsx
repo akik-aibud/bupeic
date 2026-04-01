@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -13,6 +14,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { motion } from "framer-motion";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -24,6 +26,7 @@ const navLinks = [
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -31,17 +34,22 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
+
   return (
     <header
-      className={`sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm transition-shadow ${
+      className={`sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm transition-all duration-300 ${
         scrolled ? "shadow-md" : "shadow-none"
       }`}
     >
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold text-primary">BUP</span>
-          <span className="text-xl font-bold text-foreground">EIC</span>
+        <Link href="/" className="flex items-center gap-1.5">
+          <span className="text-xl font-bold text-primary sm:text-2xl">BUP</span>
+          <span className="text-xl font-bold text-foreground sm:text-2xl">EIC</span>
         </Link>
 
         {/* Desktop Nav */}
@@ -50,9 +58,20 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              className={`relative rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                isActive(link.href)
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-primary"
+              }`}
             >
               {link.label}
+              {isActive(link.href) && (
+                <motion.div
+                  layoutId="navbar-indicator"
+                  className="absolute inset-x-1 -bottom-[13px] h-0.5 bg-primary"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
             </Link>
           ))}
         </nav>
@@ -85,7 +104,11 @@ export function Navbar() {
                     render={
                       <Link
                         href={link.href}
-                        className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-primary"
+                        className={`rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
+                          isActive(link.href)
+                            ? "bg-primary/10 text-primary"
+                            : "text-muted-foreground hover:bg-muted hover:text-primary"
+                        }`}
                       />
                     }
                   >

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import { StoreProvider } from "@/lib/store";
+import { AuthProvider } from "@/lib/auth";
 import "./globals.css";
 
 const inter = Inter({
@@ -9,9 +11,20 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "BUP Entrepreneurship & Innovation Club",
+  title: {
+    default: "BUP Entrepreneurship & Innovation Club",
+    template: "%s | BUP EIC",
+  },
   description:
-    "BUP EIC is the entrepreneurship and innovation club of Bangladesh University of Professionals, fostering entrepreneurial spirit, innovation, and leadership among students.",
+    "BUP EIC empowers students to turn ideas into impact through creativity and teamwork. Innovate, Collaborate, and Elevate.",
+  keywords: [
+    "BUP",
+    "Entrepreneurship",
+    "Innovation",
+    "Club",
+    "Bangladesh University of Professionals",
+    "BUP EIC",
+  ],
 };
 
 export default function RootLayout({
@@ -23,7 +36,11 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          {children}
+          <AuthProvider>
+            <StoreProvider>
+              {children}
+            </StoreProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

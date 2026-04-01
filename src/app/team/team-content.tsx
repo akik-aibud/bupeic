@@ -1,102 +1,11 @@
 "use client";
 
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { Mail } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-
-interface TeamMember {
-  name: string;
-  position: string;
-  initials: string;
-  socials: {
-    facebook?: string;
-    linkedin?: string;
-    email?: string;
-  };
-}
-
-const executives: TeamMember[] = [
-  {
-    name: "Arif Rahman",
-    position: "President",
-    initials: "AR",
-    socials: {
-      facebook: "#",
-      linkedin: "#",
-      email: "president@bupeic.org",
-    },
-  },
-  {
-    name: "Nusrat Jahan",
-    position: "Vice President",
-    initials: "NJ",
-    socials: {
-      facebook: "#",
-      linkedin: "#",
-      email: "vp@bupeic.org",
-    },
-  },
-  {
-    name: "Tanvir Ahmed",
-    position: "General Secretary",
-    initials: "TA",
-    socials: {
-      facebook: "#",
-      linkedin: "#",
-      email: "secretary@bupeic.org",
-    },
-  },
-  {
-    name: "Fariha Tasnim",
-    position: "Treasurer",
-    initials: "FT",
-    socials: {
-      facebook: "#",
-      linkedin: "#",
-      email: "treasurer@bupeic.org",
-    },
-  },
-];
-
-const committeeHeads: TeamMember[] = [
-  {
-    name: "Rahat Hossain",
-    position: "Head of Marketing",
-    initials: "RH",
-    socials: { facebook: "#", linkedin: "#" },
-  },
-  {
-    name: "Sadia Islam",
-    position: "Head of Events",
-    initials: "SI",
-    socials: { facebook: "#", linkedin: "#" },
-  },
-  {
-    name: "Mahir Khan",
-    position: "Head of Finance",
-    initials: "MK",
-    socials: { facebook: "#", linkedin: "#" },
-  },
-  {
-    name: "Anika Roy",
-    position: "Head of HR",
-    initials: "ARo",
-    socials: { facebook: "#", linkedin: "#" },
-  },
-  {
-    name: "Fahim Shahriar",
-    position: "Head of Tech",
-    initials: "FS",
-    socials: { facebook: "#", linkedin: "#" },
-  },
-  {
-    name: "Lamia Akter",
-    position: "Head of Creative",
-    initials: "LA",
-    socials: { facebook: "#", linkedin: "#" },
-  },
-];
+import { useStore } from "@/lib/store";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -106,6 +15,16 @@ const fadeUp = {
     transition: { delay: i * 0.1, duration: 0.5 },
   }),
 };
+
+function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .filter((part) => part.length > 0)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
 
 function FacebookIcon({ className }: { className?: string }) {
   return (
@@ -123,30 +42,66 @@ function LinkedInIcon({ className }: { className?: string }) {
   );
 }
 
-function SocialLinks({ socials }: { socials: TeamMember["socials"] }) {
+function InstagramIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+    </svg>
+  );
+}
+
+interface SocialLinksProps {
+  social: {
+    facebook?: string;
+    linkedin?: string;
+    instagram?: string;
+  };
+  email?: string;
+}
+
+function SocialLinks({ social, email }: SocialLinksProps) {
+  const hasAny =
+    social.facebook || social.linkedin || social.instagram || email;
+  if (!hasAny) return null;
+
   return (
     <div className="mt-4 flex items-center justify-center gap-3">
-      {socials.facebook && (
+      {social.facebook && (
         <a
-          href={socials.facebook}
+          href={social.facebook}
+          target="_blank"
+          rel="noopener noreferrer"
           className="text-muted-foreground transition-colors hover:text-primary"
           aria-label="Facebook"
         >
           <FacebookIcon className="size-4" />
         </a>
       )}
-      {socials.linkedin && (
+      {social.linkedin && (
         <a
-          href={socials.linkedin}
+          href={social.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
           className="text-muted-foreground transition-colors hover:text-primary"
           aria-label="LinkedIn"
         >
           <LinkedInIcon className="size-4" />
         </a>
       )}
-      {socials.email && (
+      {social.instagram && (
         <a
-          href={`mailto:${socials.email}`}
+          href={social.instagram}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-muted-foreground transition-colors hover:text-primary"
+          aria-label="Instagram"
+        >
+          <InstagramIcon className="size-4" />
+        </a>
+      )}
+      {email && (
+        <a
+          href={`mailto:${email}`}
           className="text-muted-foreground transition-colors hover:text-primary"
           aria-label="Email"
         >
@@ -157,57 +112,32 @@ function SocialLinks({ socials }: { socials: TeamMember["socials"] }) {
   );
 }
 
-function MemberCard({
-  member,
-  index,
-  large = false,
-}: {
-  member: TeamMember;
-  index: number;
-  large?: boolean;
-}) {
-  return (
-    <motion.div
-      custom={index}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-      variants={fadeUp}
-    >
-      <Card className="h-full border-none bg-card shadow-sm transition-shadow hover:shadow-md">
-        <CardContent className={`flex flex-col items-center ${large ? "p-8" : "p-6"}`}>
-          <Avatar className={large ? "size-24" : "size-16"}>
-            <AvatarFallback
-              className={`bg-primary/10 font-semibold text-primary ${large ? "text-xl" : "text-sm"}`}
-            >
-              {member.initials}
-            </AvatarFallback>
-          </Avatar>
-          <h3
-            className={`mt-4 font-semibold text-foreground ${large ? "text-lg" : "text-base"}`}
-          >
-            {member.name}
-          </h3>
-          <p className="mt-1 text-sm text-primary">{member.position}</p>
-          <SocialLinks socials={member.socials} />
-        </CardContent>
-      </Card>
-    </motion.div>
-  );
-}
-
 export function TeamContent() {
+  const { teamMembers } = useStore();
+
+  const executives = useMemo(() => {
+    return teamMembers
+      .filter((m) => m.category === "executive" && m.status === "active")
+      .sort((a, b) => a.order - b.order);
+  }, [teamMembers]);
+
+  const committeeMembers = useMemo(() => {
+    return teamMembers
+      .filter((m) => m.category === "committee" && m.status === "active")
+      .sort((a, b) => a.order - b.order);
+  }, [teamMembers]);
+
   return (
     <main className="flex-1">
       {/* Hero Banner */}
-      <section className="relative overflow-hidden bg-primary py-20 text-primary-foreground">
+      <section className="relative overflow-hidden bg-primary py-14 text-primary-foreground sm:py-20">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(255,255,255,0.15)_0%,_transparent_60%)]" />
-        <div className="container relative mx-auto px-4 text-center">
+        <div className="container relative mx-auto px-4 text-center sm:px-6">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-4xl font-bold tracking-tight sm:text-5xl"
+            className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
           >
             Our Team
           </motion.h1>
@@ -215,7 +145,7 @@ export function TeamContent() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mx-auto mt-4 max-w-2xl text-lg text-primary-foreground/80"
+            className="mx-auto mt-3 max-w-2xl text-base text-primary-foreground/80 sm:mt-4 sm:text-lg"
           >
             Meet the people driving innovation and impact at BUP EIC.
           </motion.p>
@@ -223,55 +153,111 @@ export function TeamContent() {
       </section>
 
       {/* Executive Panel */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
+      <section className="py-14 sm:py-20">
+        <div className="container mx-auto px-4 sm:px-6">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center text-3xl font-bold text-foreground"
+            className="text-center text-2xl font-bold text-foreground sm:text-3xl"
           >
             Executive Panel
           </motion.h2>
-          <p className="mx-auto mt-4 max-w-2xl text-center text-muted-foreground">
+          <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-muted-foreground sm:mt-4 sm:text-base">
             The leadership team guiding BUP EIC&apos;s vision and strategy.
           </p>
 
-          <div className="mx-auto mt-12 grid max-w-5xl gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mx-auto mt-10 grid max-w-5xl gap-6 sm:mt-12 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4">
             {executives.map((member, i) => (
-              <MemberCard
-                key={member.name}
-                member={member}
-                index={i}
-                large
-              />
+              <motion.div
+                key={member.id}
+                custom={i}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeUp}
+              >
+                <Card className="h-full border-none bg-card shadow-sm transition-shadow hover:shadow-md">
+                  <CardContent className="flex flex-col items-center p-6 sm:p-8">
+                    <Avatar className="size-20 sm:size-24">
+                      <AvatarFallback className="bg-primary/10 text-lg font-semibold text-primary sm:text-xl">
+                        {getInitials(member.name)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <h3 className="mt-4 text-base font-semibold text-foreground sm:text-lg">
+                      {member.name}
+                    </h3>
+                    <p className="mt-1 text-sm text-primary">
+                      {member.position}
+                    </p>
+                    {member.bio && (
+                      <p className="mt-2 text-center text-xs text-muted-foreground line-clamp-2">
+                        {member.bio}
+                      </p>
+                    )}
+                    <SocialLinks social={member.social} email={member.email} />
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Committee Heads */}
-      <section className="bg-muted/50 py-20">
-        <div className="container mx-auto px-4">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center text-3xl font-bold text-foreground"
-          >
-            Committee Heads
-          </motion.h2>
-          <p className="mx-auto mt-4 max-w-2xl text-center text-muted-foreground">
-            Dedicated leaders managing each department of the club.
-          </p>
+      {/* Committee Members */}
+      {committeeMembers.length > 0 && (
+        <section className="bg-muted/50 py-14 sm:py-20">
+          <div className="container mx-auto px-4 sm:px-6">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center text-2xl font-bold text-foreground sm:text-3xl"
+            >
+              Committee Heads
+            </motion.h2>
+            <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-muted-foreground sm:mt-4 sm:text-base">
+              Dedicated leaders managing each department of the club.
+            </p>
 
-          <div className="mx-auto mt-12 grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {committeeHeads.map((member, i) => (
-              <MemberCard key={member.name} member={member} index={i} />
-            ))}
+            <div className="mx-auto mt-10 grid max-w-5xl gap-4 sm:mt-12 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+              {committeeMembers.map((member, i) => (
+                <motion.div
+                  key={member.id}
+                  custom={i}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={fadeUp}
+                >
+                  <Card className="h-full border-none bg-card shadow-sm transition-shadow hover:shadow-md">
+                    <CardContent className="flex flex-col items-center p-5 sm:p-6">
+                      <Avatar className="size-14 sm:size-16">
+                        <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
+                          {getInitials(member.name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <h3 className="mt-3 text-sm font-semibold text-foreground sm:text-base">
+                        {member.name}
+                      </h3>
+                      <p className="mt-0.5 text-xs text-primary sm:text-sm">
+                        {member.position}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {member.department}
+                      </p>
+                      <SocialLinks
+                        social={member.social}
+                        email={member.email}
+                      />
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </main>
   );
 }

@@ -1,97 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Calendar,
-  MapPin,
-  ArrowRight,
-  Presentation,
-  BrainCircuit,
-  Rocket,
-  Wrench,
-  Code,
-  Store,
-} from "lucide-react";
+import { Calendar, MapPin, ArrowRight, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useStore } from "@/lib/store";
 
-type EventStatus = "upcoming" | "past";
-
-interface ClubEvent {
-  id: number;
-  title: string;
-  date: string;
-  location: string;
-  description: string;
-  status: EventStatus;
-  icon: React.ComponentType<{ className?: string }>;
-}
-
-const events: ClubEvent[] = [
-  {
-    id: 1,
-    title: "Startup Pitch 3.0",
-    date: "May 15, 2026",
-    location: "BUP Auditorium",
-    description:
-      "Present your startup idea to a panel of investors and industry experts. Top 3 teams win seed funding and mentorship opportunities.",
-    status: "upcoming",
-    icon: Presentation,
-  },
-  {
-    id: 2,
-    title: "Case Competition",
-    date: "June 8, 2026",
-    location: "BUP Seminar Hall",
-    description:
-      "Solve real-world business challenges presented by leading companies. Test your analytical and strategic thinking skills.",
-    status: "upcoming",
-    icon: BrainCircuit,
-  },
-  {
-    id: 3,
-    title: "Innovation Summit 3.0",
-    date: "July 20, 2026",
-    location: "BUP Convention Center",
-    description:
-      "A full-day summit with keynote speakers, panel discussions, and networking sessions featuring top entrepreneurs from Bangladesh.",
-    status: "upcoming",
-    icon: Rocket,
-  },
-  {
-    id: 4,
-    title: "Workshop Series: Business Model Canvas",
-    date: "January 25, 2026",
-    location: "BUP Room 302",
-    description:
-      "A hands-on workshop series teaching you how to structure your business idea using the Business Model Canvas framework.",
-    status: "past",
-    icon: Wrench,
-  },
-  {
-    id: 5,
-    title: "Hackathon: Code for Impact",
-    date: "November 12, 2025",
-    location: "BUP CS Lab",
-    description:
-      "A 24-hour hackathon where teams build technology solutions for social impact. Open to all BUP students.",
-    status: "past",
-    icon: Code,
-  },
-  {
-    id: 6,
-    title: "Business Fest 2025",
-    date: "September 5, 2025",
-    location: "BUP Campus Ground",
-    description:
-      "BUP EIC's flagship event featuring stalls, competitions, guest talks, and product showcases from student entrepreneurs.",
-    status: "past",
-    icon: Store,
-  },
-];
+type FilterValue = "all" | "upcoming" | "past";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -99,23 +17,70 @@ const fadeUp = {
   exit: { opacity: 0, y: -10, transition: { duration: 0.2 } },
 };
 
-export function EventsContent() {
-  const [filter, setFilter] = useState<"all" | EventStatus>("all");
+const categoryLabels: Record<string, string> = {
+  competition: "Competition",
+  workshop: "Workshop",
+  seminar: "Seminar",
+  networking: "Networking",
+  fest: "Fest",
+};
 
-  const filtered =
-    filter === "all" ? events : events.filter((e) => e.status === filter);
+function formatDate(dateStr: string) {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+export function EventsContent() {
+  const { events } = useStore();
+  const [filter, setFilter] = useState<FilterValue>("all");
+
+  const filtered = useMemo(() => {
+    if (filter === "all") return events;
+    if (filter === "upcoming") {
+      return events.filter(
+        (e) => e.status === "upcoming" || e.status === "ongoing"
+      );
+    }
+    return events.filter(
+      (e) => e.status === "completed"
+    );
+  }, [events, filter]);
+
+  // Sort: upcoming/ongoing first by date ascending, completed by date descending
+  const sorted = useMemo(() => {
+    return [...filtered].sort((a, b) => {
+      const aDate = new Date(a.date).getTime();
+      const bDate = new Date(b.date).getTime();
+      if (
+        (a.status === "upcoming" || a.status === "ongoing") &&
+        (b.status === "upcoming" || b.status === "ongoing")
+      ) {
+        return aDate - bDate;
+      }
+      if (a.status === "completed" && b.status === "completed") {
+        return bDate - aDate;
+      }
+      // upcoming before completed
+      if (a.status === "completed") return 1;
+      return -1;
+    });
+  }, [filtered]);
 
   return (
     <main className="flex-1">
       {/* Hero Banner */}
-      <section className="relative overflow-hidden bg-primary py-20 text-primary-foreground">
+      <section className="relative overflow-hidden bg-primary py-14 text-primary-foreground sm:py-20">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(255,255,255,0.15)_0%,_transparent_60%)]" />
-        <div className="container relative mx-auto px-4 text-center">
+        <div className="container relative mx-auto px-4 text-center sm:px-6">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-4xl font-bold tracking-tight sm:text-5xl"
+            className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
           >
             Our Events
           </motion.h1>
@@ -123,7 +88,7 @@ export function EventsContent() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mx-auto mt-4 max-w-2xl text-lg text-primary-foreground/80"
+            className="mx-auto mt-3 max-w-2xl text-base text-primary-foreground/80 sm:mt-4 sm:text-lg"
           >
             Discover our upcoming activities and relive our past experiences.
           </motion.p>
@@ -131,15 +96,13 @@ export function EventsContent() {
       </section>
 
       {/* Filter Tabs + Grid */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
+      <section className="py-14 sm:py-20">
+        <div className="container mx-auto px-4 sm:px-6">
           {/* Tabs */}
           <div className="flex justify-center">
             <Tabs
               defaultValue="all"
-              onValueChange={(val) =>
-                setFilter(val as "all" | EventStatus)
-              }
+              onValueChange={(val) => setFilter(val as FilterValue)}
             >
               <TabsList>
                 <TabsTrigger value="all">All</TabsTrigger>
@@ -150,71 +113,112 @@ export function EventsContent() {
           </div>
 
           {/* Events Grid */}
-          <div className="mx-auto mt-12 grid max-w-6xl gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mx-auto mt-10 grid max-w-6xl gap-6 sm:mt-12 sm:grid-cols-2 lg:grid-cols-3">
             <AnimatePresence mode="popLayout">
-              {filtered.map((event) => (
-                <motion.div
-                  key={event.id}
-                  layout
-                  variants={fadeUp}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                >
-                  <Card className="group h-full overflow-hidden border-none bg-card shadow-sm transition-shadow hover:shadow-md">
-                    {/* Image Placeholder */}
-                    <div className="relative flex h-48 items-center justify-center bg-primary/5">
-                      <event.icon className="size-16 text-primary/30" />
-                      <div className="absolute right-3 top-3">
-                        <Badge
-                          variant={
-                            event.status === "upcoming"
-                              ? "default"
-                              : "secondary"
-                          }
-                          className={
-                            event.status === "upcoming"
-                              ? "bg-primary text-primary-foreground"
-                              : ""
-                          }
-                        >
-                          {event.status === "upcoming" ? "Upcoming" : "Past"}
-                        </Badge>
-                      </div>
-                    </div>
+              {sorted.map((event) => {
+                const isUpcoming =
+                  event.status === "upcoming" || event.status === "ongoing";
 
-                    <CardContent className="p-6">
-                      <h3 className="text-lg font-semibold text-foreground">
-                        {event.title}
-                      </h3>
-
-                      <div className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="size-4 shrink-0 text-primary" />
-                          <span>{event.date}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <MapPin className="size-4 shrink-0 text-primary" />
-                          <span>{event.location}</span>
+                return (
+                  <motion.div
+                    key={event.id}
+                    layout
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                  >
+                    <Card className="group h-full overflow-hidden border-none bg-card shadow-sm transition-shadow hover:shadow-md">
+                      {/* Category Banner */}
+                      <div className="relative flex h-40 items-center justify-center bg-primary/5 sm:h-48">
+                        <span className="text-3xl font-bold text-primary/15 sm:text-4xl">
+                          {categoryLabels[event.category] ?? event.category}
+                        </span>
+                        <div className="absolute right-3 top-3">
+                          <Badge
+                            variant={isUpcoming ? "default" : "secondary"}
+                            className={
+                              isUpcoming
+                                ? "bg-primary text-primary-foreground"
+                                : ""
+                            }
+                          >
+                            {event.status === "ongoing"
+                              ? "Ongoing"
+                              : isUpcoming
+                              ? "Upcoming"
+                              : "Completed"}
+                          </Badge>
                         </div>
                       </div>
 
-                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                        {event.description}
-                      </p>
+                      <CardContent className="p-5 sm:p-6">
+                        <h3 className="text-base font-semibold text-foreground sm:text-lg">
+                          {event.title}
+                        </h3>
 
-                      {event.status === "upcoming" && (
-                        <Button className="mt-4 w-full" size="sm">
-                          Register Now
-                          <ArrowRight className="ml-2 size-4" />
-                        </Button>
-                      )}
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
+                        <div className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-2">
+                            <Calendar className="size-4 shrink-0 text-primary" />
+                            <span>
+                              {formatDate(event.date)} &middot; {event.time}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <MapPin className="size-4 shrink-0 text-primary" />
+                            <span>{event.location}</span>
+                          </div>
+                          {event.maxAttendees && (
+                            <div className="flex items-center gap-2">
+                              <Users className="size-4 shrink-0 text-primary" />
+                              <span>
+                                {event.attendees}/{event.maxAttendees} attendees
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground line-clamp-3">
+                          {event.description}
+                        </p>
+
+                        {isUpcoming && event.registrationLink && (
+                          <Button
+                            className="mt-4 w-full"
+                            size="sm"
+                            render={
+                              <a
+                                href={event.registrationLink}
+                                target={
+                                  event.registrationLink.startsWith("http")
+                                    ? "_blank"
+                                    : undefined
+                                }
+                                rel={
+                                  event.registrationLink.startsWith("http")
+                                    ? "noopener noreferrer"
+                                    : undefined
+                                }
+                              />
+                            }
+                          >
+                            Register Now
+                            <ArrowRight className="ml-2 size-4" />
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
             </AnimatePresence>
           </div>
+
+          {sorted.length === 0 && (
+            <p className="mt-12 text-center text-muted-foreground">
+              No events found for this filter.
+            </p>
+          )}
         </div>
       </section>
     </main>
