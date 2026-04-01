@@ -1,20 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { Calendar, MapPin, ArrowRight, Users, Clock } from "lucide-react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Calendar, MapPin, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useStore } from "@/lib/store";
 import { useMemo } from "react";
+import { motion } from "framer-motion";
 
 export function EventsSection() {
   const { events } = useStore();
@@ -43,131 +35,75 @@ export function EventsSection() {
     fest: "Fest",
   };
 
-  const categoryColors: Record<string, string> = {
-    competition: "bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20",
-    workshop: "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20",
-    seminar: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20",
-    networking: "bg-violet-500/10 text-violet-700 dark:text-violet-400 border-violet-500/20",
-    fest: "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20",
-  };
-
   return (
-    <section id="events" className="relative overflow-hidden bg-muted/30 py-16 sm:py-24">
-      {/* Background patterns */}
-      <div className="absolute inset-0 grid-pattern opacity-10" />
-      <motion.div
-        animate={{
-          x: [0, -20, 0],
-          y: [0, 20, 0],
-        }}
-        transition={{
-          duration: 12,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="absolute -left-40 top-1/4 h-96 w-96 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 blur-3xl"
-      />
-
-      <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+    <section id="events" className="py-16 sm:py-20 lg:py-24">
+      <div className="container mx-auto max-w-6xl px-4 sm:px-6">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          className="mb-16 text-center"
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5 }}
+          className="mb-12 text-center"
         >
-          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl font-serif">
-            Upcoming <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Events</span>
+          <h2 className="font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            Upcoming Events
           </h2>
-          <p className="mx-auto mt-6 max-w-xl text-base text-muted-foreground sm:mt-8 sm:text-lg">
+          <p className="mx-auto mt-4 max-w-xl text-base text-muted-foreground">
             Stay connected with our latest events, workshops, and competitions
           </p>
         </motion.div>
 
         {upcomingEvents.length > 0 ? (
-          <div className="grid gap-8 sm:gap-10 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {upcomingEvents.map((event, index) => (
               <motion.div
                 key={event.id}
-                initial={{ opacity: 0, y: 40, scale: 0.95 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.6, delay: index * 0.15, type: "spring" }}
-                className="group"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
               >
-                <Card className="h-full overflow-hidden border-2 border-border/30 transition-all duration-300 group-hover:border-primary/50 group-hover:shadow-2xl">
-                  {/* Header with gradient */}
-                  <motion.div
-                    className="relative h-32 bg-gradient-to-br from-primary/20 to-primary/5 p-4 sm:h-40"
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className="flex items-start justify-between">
-                      <Badge
-                        variant="outline"
-                        className={`border backdrop-blur-sm ${
-                          categoryColors[event.category] || "bg-primary/10 text-primary border-primary/20"
-                        }`}
-                      >
-                        {categoryLabels[event.category] ?? event.category}
-                      </Badge>
-                      {event.status === "ongoing" && (
-                        <motion.div
-                          animate={{ opacity: [1, 0.5, 1] }}
-                          transition={{ duration: 2, repeat: Infinity }}
-                          className="flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground shadow-lg"
-                        >
-                          <Clock className="size-3" />
-                          <span>Ongoing</span>
-                        </motion.div>
-                      )}
-                    </div>
-                    
-                    {/* Date display */}
-                    <div className="absolute bottom-4 left-4">
-                      <div className="rounded-lg bg-white/90 p-2 backdrop-blur-sm shadow-md dark:bg-gray-900/90">
-                        <div className="text-xs font-bold text-primary sm:text-sm">
-                          {new Date(event.date).toLocaleDateString("en-US", { month: "short" }).toUpperCase()}
-                        </div>
-                        <div className="text-lg font-bold text-foreground sm:text-xl">
-                          {new Date(event.date).getDate()}
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
+                <div className="flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:border-border dark:bg-card">
+                  <div className="mb-3 flex items-center justify-between">
+                    <Badge
+                      variant="outline"
+                      className="border-primary/20 bg-primary/5 text-primary"
+                    >
+                      {categoryLabels[event.category] ?? event.category}
+                    </Badge>
+                    {event.status === "ongoing" && (
+                      <span className="flex items-center gap-1.5 rounded-full bg-primary px-2.5 py-0.5 text-xs font-medium text-primary-foreground">
+                        <span className="size-1.5 rounded-full bg-primary-foreground animate-pulse" />
+                        Ongoing
+                      </span>
+                    )}
+                  </div>
 
-                  <CardHeader className="pb-3 pt-4 sm:pt-6">
-                    <CardTitle className="text-base font-bold line-clamp-2 group-hover:text-primary transition-colors sm:text-lg">
-                      {event.title}
-                    </CardTitle>
-                  </CardHeader>
+                  <h3 className="text-base font-semibold text-foreground line-clamp-2">
+                    {event.title}
+                  </h3>
 
-                  <CardContent className="flex-1 space-y-2 pb-3 pt-0">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Calendar className="size-4 text-primary" />
+                  <div className="mt-3 space-y-2 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="size-4 text-primary/70" />
                       <span>{formatDate(event.date)}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <MapPin className="size-4 text-primary" />
+                    <div className="flex items-center gap-2">
+                      <MapPin className="size-4 text-primary/70" />
                       <span className="line-clamp-1">{event.location}</span>
                     </div>
-                    {event.maxAttendees && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Users className="size-4 text-primary" />
-                        <span>{event.attendees}/{event.maxAttendees} attending</span>
-                      </div>
-                    )}
-                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground line-clamp-3">
-                      {event.description}
-                    </p>
-                  </CardContent>
+                  </div>
 
-                  <CardFooter className="pt-2">
+                  <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground line-clamp-2">
+                    {event.description}
+                  </p>
+
+                  <div className="mt-4 pt-3 border-t border-border">
                     {event.registrationLink ? (
                       <Button
                         variant="outline"
-                        className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
                         size="sm"
+                        className="w-full"
                         render={
                           <a
                             href={event.registrationLink}
@@ -177,57 +113,45 @@ export function EventsSection() {
                         }
                       >
                         {event.status === "ongoing" ? "Join Now" : "Register"}
-                        <ArrowRight className="ml-1 size-4 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="ml-1.5 size-3.5" />
                       </Button>
                     ) : (
                       <Button
                         variant="outline"
-                        className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
                         size="sm"
+                        className="w-full"
                         render={<Link href="/events" />}
                       >
                         Learn More
-                        <ArrowRight className="ml-1 size-4 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="ml-1.5 size-3.5" />
                       </Button>
                     )}
-                  </CardFooter>
-                </Card>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
         ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="rounded-3xl border-2 border-dashed border-border/50 bg-card/50 py-16 text-center backdrop-blur-sm"
-          >
-            <Calendar className="mx-auto size-16 text-muted-foreground/50" />
-            <p className="mt-4 text-lg text-muted-foreground">
+          <div className="rounded-2xl border border-dashed border-border bg-muted/30 py-16 text-center">
+            <Calendar className="mx-auto size-12 text-muted-foreground/40" />
+            <p className="mt-4 text-base text-muted-foreground">
               No upcoming events at the moment
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
               Check back soon for exciting opportunities!
             </p>
-          </motion.div>
+          </div>
         )}
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-12 text-center sm:mt-16"
-        >
-          <Button 
-            size="lg"
-            className="h-14 px-8 text-base shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all hover:scale-105"
-            render={<Link href="/events" />}
+        <div className="mt-10 text-center">
+          <Link
+            href="/events"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
           >
             View All Events
-            <ArrowRight className="ml-2 size-5" />
-          </Button>
-        </motion.div>
+            <ArrowRight className="size-4" />
+          </Link>
+        </div>
       </div>
     </section>
   );

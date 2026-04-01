@@ -1,3 +1,5 @@
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
 import { HeroSection } from "@/components/sections/hero-section";
 import { AboutSection } from "@/components/sections/about-section";
 import { StatsSection } from "@/components/sections/stats-section";
@@ -7,13 +9,17 @@ import { CtaSection } from "@/components/sections/cta-section";
 
 export default function Home() {
   return (
-    <main>
-      <HeroSection />
-      <AboutSection />
-      <StatsSection />
-      <EventsSection />
-      <TeamSection />
-      <CtaSection />
-    </main>
+    <>
+      <Navbar />
+      <main>
+        <HeroSection />
+        <AboutSection />
+        <StatsSection />
+        <EventsSection />
+        <TeamSection />
+        <CtaSection />
+      </main>
+      <Footer />
+    </>
   );
 }

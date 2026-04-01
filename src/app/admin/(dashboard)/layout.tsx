@@ -22,10 +22,9 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { AuthGuard } from "@/components/auth-guard";
-import { useAuth, getRoleBadgeColor, getRoleLabel } from "@/lib/auth";
+import { useAuth, getRoleLabel } from "@/lib/auth";
 
 const navItems = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -54,13 +53,13 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
             href={item.href}
             onClick={onNavigate}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+              "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
               isActive
-                ? "bg-primary text-primary-foreground"
+                ? "bg-primary/10 text-primary"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
             )}
           >
-            <item.icon className="size-4" />
+            <item.icon className="size-[18px]" />
             {item.label}
           </Link>
         );
@@ -71,18 +70,31 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           href="/admin/users"
           onClick={onNavigate}
           className={cn(
-            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+            "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
             pathname.startsWith("/admin/users")
-              ? "bg-primary text-primary-foreground"
+              ? "bg-primary/10 text-primary"
               : "text-muted-foreground hover:bg-muted hover:text-foreground"
           )}
         >
-          <UserCog className="size-4" />
+          <UserCog className="size-[18px]" />
           Users
         </Link>
       )}
     </nav>
   );
+}
+
+function getRoleBadgeStyle(role: string): string {
+  switch (role) {
+    case "super_admin":
+      return "bg-red-50 text-red-700 border border-red-200";
+    case "admin":
+      return "bg-blue-50 text-blue-700 border border-blue-200";
+    case "editor":
+      return "bg-green-50 text-green-700 border border-green-200";
+    default:
+      return "bg-muted text-muted-foreground border border-border";
+  }
 }
 
 function UserInfo() {
@@ -93,22 +105,24 @@ function UserInfo() {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3 px-3">
-        <div className="flex size-8 items-center justify-center rounded-full bg-muted font-medium text-sm">
+        <div className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-sm">
           {user.name.charAt(0).toUpperCase()}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium truncate">{user.name}</p>
+          <p className="text-sm font-medium truncate text-foreground">
+            {user.name}
+          </p>
           <span
             className={cn(
               "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium",
-              getRoleBadgeColor(user.role)
+              getRoleBadgeStyle(user.role)
             )}
           >
             {getRoleLabel(user.role)}
           </span>
         </div>
       </div>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-0.5">
         <Link
           href="/"
           className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
@@ -118,7 +132,7 @@ function UserInfo() {
         </Link>
         <button
           onClick={logout}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30 transition-colors"
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
         >
           <LogOut className="size-4" />
           Sign Out
@@ -131,20 +145,32 @@ function UserInfo() {
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center gap-2 px-4 py-5">
-        <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm">
+      {/* Branding */}
+      <div className="flex items-center gap-3 px-5 py-5">
+        <div className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-sm">
           E
         </div>
         <div>
-          <p className="text-sm font-semibold">BUP EIC Admin</p>
-          <p className="text-xs text-muted-foreground">Management Panel</p>
+          <p className="text-sm font-bold text-foreground">BUP EIC</p>
+          <p className="text-[11px] text-muted-foreground">Admin Panel</p>
         </div>
       </div>
-      <Separator />
-      <div className="flex-1 px-3 py-4">
+
+      {/* Divider */}
+      <div className="mx-4 border-t border-border" />
+
+      {/* Navigation */}
+      <div className="flex-1 px-3 py-4 overflow-y-auto">
+        <p className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+          Menu
+        </p>
         <SidebarNav onNavigate={onNavigate} />
       </div>
-      <Separator />
+
+      {/* Divider */}
+      <div className="mx-4 border-t border-border" />
+
+      {/* User info */}
       <div className="px-3 py-4">
         <UserInfo />
       </div>
@@ -163,7 +189,7 @@ export default function AdminDashboardLayout({
     <AuthGuard>
       <div className="flex min-h-screen bg-muted/30">
         {/* Desktop sidebar */}
-        <aside className="hidden w-64 shrink-0 border-r bg-card lg:block">
+        <aside className="hidden w-64 shrink-0 border-r border-border bg-card lg:block">
           <SidebarContent />
         </aside>
 
@@ -171,7 +197,7 @@ export default function AdminDashboardLayout({
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <div className="flex flex-1 flex-col">
             {/* Top bar */}
-            <header className="flex h-14 items-center gap-3 border-b bg-card px-4 lg:px-6">
+            <header className="flex h-14 items-center gap-3 border-b border-border bg-card px-4 lg:hidden">
               <SheetTrigger
                 render={
                   <Button variant="ghost" size="icon" className="lg:hidden" />
@@ -180,7 +206,14 @@ export default function AdminDashboardLayout({
                 <Menu className="size-5" />
                 <span className="sr-only">Toggle sidebar</span>
               </SheetTrigger>
-              <h1 className="text-sm font-semibold lg:hidden">BUP EIC Admin</h1>
+              <div className="flex items-center gap-2">
+                <div className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-xs">
+                  E
+                </div>
+                <h1 className="text-sm font-semibold text-foreground">
+                  BUP EIC Admin
+                </h1>
+              </div>
             </header>
 
             {/* Page content */}
