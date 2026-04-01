@@ -72,6 +72,8 @@ export interface SiteSettings {
     twitter: string;
   };
   announcement?: string;
+  heroTitle?: string;
+  heroDescription?: string;
 }
 
 export interface Stats {
@@ -79,6 +81,7 @@ export interface Stats {
   events: number;
   members: number;
   partners: number;
+  alumni: number;
 }
 
 // Role permissions

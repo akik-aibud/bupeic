@@ -318,6 +318,8 @@ export const defaultSettings: SiteSettings = {
     twitter: "",
   },
   announcement: "",
+  heroTitle: "Innovate. Collaborate. Elevate.",
+  heroDescription: "Join the community that transforms bold ideas into real-world impact through creativity, teamwork, and innovation.",
 };
 
 // ── Default Stats ──
@@ -326,4 +328,5 @@ export const defaultStats: Stats = {
   events: 50,
   members: 500,
   partners: 20,
+  alumni: 500,
 };
