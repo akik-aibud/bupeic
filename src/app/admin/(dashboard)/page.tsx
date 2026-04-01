@@ -164,38 +164,35 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="grid gap-3 sm:grid-cols-2">
-              <Button
-                className="justify-between gap-2"
-                variant="outline"
-                asChild
-              >
-                <Link href="/admin/events">
+              <Link href="/admin/events">
+                <Button
+                  className="justify-between gap-2 w-full"
+                  variant="outline"
+                >
                   <span className="flex items-center gap-2">
                     <Plus className="size-4" />
                     Manage Events
                   </span>
                   <ArrowRight className="size-4" />
-                </Link>
-              </Button>
-              <Button
-                className="justify-between gap-2"
-                variant="outline"
-                asChild
-              >
-                <Link href="/admin/team">
+                </Button>
+              </Link>
+              <Link href="/admin/team">
+                <Button
+                  className="justify-between gap-2 w-full"
+                  variant="outline"
+                >
                   <span className="flex items-center gap-2">
                     <UserPlus className="size-4" />
                     Manage Team
                   </span>
                   <ArrowRight className="size-4" />
-                </Link>
-              </Button>
-              <Button
-                className="justify-between gap-2"
-                variant="outline"
-                asChild
-              >
-                <Link href="/admin/messages">
+                </Button>
+              </Link>
+              <Link href="/admin/messages">
+                <Button
+                  className="justify-between gap-2 w-full"
+                  variant="outline"
+                >
                   <span className="flex items-center gap-2">
                     <MessageSquare className="size-4" />
                     View Messages
@@ -205,21 +202,21 @@ export default function AdminDashboard() {
                       {unreadMessages}
                     </Badge>
                   )}
-                </Link>
-              </Button>
-              <Button
-                className="justify-between gap-2"
-                variant="outline"
-                asChild
-              >
-                <Link href="/admin/settings">
+                  <ArrowRight className="size-4" />
+                </Button>
+              </Link>
+              <Link href="/admin/settings">
+                <Button
+                  className="justify-between gap-2 w-full"
+                  variant="outline"
+                >
                   <span className="flex items-center gap-2">
                     <FileText className="size-4" />
                     Site Settings
                   </span>
                   <ArrowRight className="size-4" />
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             </div>
           </CardContent>
         </Card>

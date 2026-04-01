@@ -175,6 +175,7 @@ export default function UsersPage() {
 
   function handleDelete() {
     if (!deletingUser) return;
+    if (!user) return;
     if (deletingUser.id === user.id) {
       showError("You cannot delete your own account.");
       setDeleteDialogOpen(false);
@@ -452,7 +453,7 @@ export default function UsersPage() {
               </select>
             </div>
             <DialogFooter className="gap-2">
-              <DialogClose asChild>
+              <DialogClose>
                 <Button type="button" variant="outline">
                   Cancel
                 </Button>
@@ -476,7 +477,7 @@ export default function UsersPage() {
             cannot be undone.
           </p>
           <DialogFooter className="gap-2">
-            <DialogClose asChild>
+            <DialogClose>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
             <Button variant="destructive" onClick={handleDelete}>
