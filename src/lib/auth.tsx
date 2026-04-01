@@ -1,24 +1,22 @@
 "use client";
 
+import { useCallback } from "react";
+import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-  type ReactNode,
-} from "react";
+  setUser,
+  logout as logoutAction,
+  addUser as addUserAction,
+  updateUser as updateUserAction,
+  deleteUser as deleteUserAction,
+  setLoading,
+} from "./redux/slices/authSlice";
 import type { User, Role } from "./types";
-import { defaultUsers } from "./data";
 import { hasPermission } from "./types";
 
-interface AuthState {
+interface AuthHook {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-}
-
-interface AuthActions {
   login: (email: string, password: string) => { success: boolean; error?: string };
   logout: () => void;
   checkPermission: (permission: string) => boolean;
@@ -28,39 +26,12 @@ interface AuthActions {
   deleteUser: (id: string) => void;
 }
 
-type AuthContext = AuthState & AuthActions;
+export function useAuth(): AuthHook {
+  const dispatch = useAppDispatch();
 
-const AuthCtx = createContext<AuthContext | null>(null);
-
-const AUTH_KEY = "bupeic_auth";
-const USERS_KEY = "bupeic_users";
-
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [users, setUsers] = useState<User[]>(defaultUsers);
-
-  useEffect(() => {
-    try {
-      const storedUsers = localStorage.getItem(USERS_KEY);
-      if (storedUsers) setUsers(JSON.parse(storedUsers));
-
-      const stored = localStorage.getItem(AUTH_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        setUser(parsed);
-      }
-    } catch {
-      // ignore
-    }
-    setIsLoading(false);
-  }, []);
-
-  useEffect(() => {
-    if (users !== defaultUsers) {
-      localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    }
-  }, [users]);
+  const user = useAppSelector((state) => state.auth.user);
+  const users = useAppSelector((state) => state.auth.users);
+  const isLoading = useAppSelector((state) => state.auth.isLoading);
 
   const login = useCallback(
     (email: string, password: string) => {
@@ -70,17 +41,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!found) {
         return { success: false, error: "Invalid email or password" };
       }
-      setUser(found);
-      localStorage.setItem(AUTH_KEY, JSON.stringify(found));
+      dispatch(setUser(found));
       return { success: true };
     },
-    [users]
+    [users, dispatch]
   );
 
   const logout = useCallback(() => {
-    setUser(null);
-    localStorage.removeItem(AUTH_KEY);
-  }, []);
+    dispatch(logoutAction());
+  }, [dispatch]);
 
   const checkPermission = useCallback(
     (permission: string) => {
@@ -92,49 +61,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const getAllUsers = useCallback(() => users, [users]);
 
-  const addUser = useCallback((newUser: User) => {
-    setUsers((prev) => [...prev, newUser]);
-  }, []);
-
-  const updateUser = useCallback((id: string, updates: Partial<User>) => {
-    setUsers((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, ...updates } : u))
-    );
-  }, []);
-
-  const deleteUser = useCallback((id: string) => {
-    setUsers((prev) => prev.filter((u) => u.id !== id));
-  }, []);
-
-  return (
-    <AuthCtx.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        isLoading,
-        login,
-        logout,
-        checkPermission,
-        getAllUsers,
-        addUser,
-        updateUser,
-        deleteUser,
-      }}
-    >
-      {children}
-    </AuthCtx.Provider>
+  const addUser = useCallback(
+    (newUser: User) => dispatch(addUserAction(newUser)),
+    [dispatch]
   );
-}
 
-export function useAuth(): AuthContext {
-  const ctx = useContext(AuthCtx);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
-  return ctx;
+  const updateUser = useCallback(
+    (id: string, updates: Partial<User>) =>
+      dispatch(updateUserAction({ id, updates })),
+    [dispatch]
+  );
+
+  const deleteUser = useCallback(
+    (id: string) => dispatch(deleteUserAction(id)),
+    [dispatch]
+  );
+
+  return {
+    user,
+    isAuthenticated: !!user,
+    isLoading,
+    login,
+    logout,
+    checkPermission,
+    getAllUsers,
+    addUser,
+    updateUser,
+    deleteUser,
+  };
 }
 
 export function useRequireAuth() {
-  const auth = useAuth();
-  return auth;
+  return useAuth();
 }
 
 export function getRoleBadgeColor(role: Role): string {
@@ -157,4 +115,9 @@ export function getRoleLabel(role: Role): string {
     case "editor":
       return "Editor";
   }
+}
+
+// Keep AuthProvider as a no-op wrapper for backward compat
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
 }

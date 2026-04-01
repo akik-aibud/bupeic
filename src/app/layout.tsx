@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
-import { StoreProvider } from "@/lib/store";
-import { AuthProvider } from "@/lib/auth";
+import { ReduxProvider } from "@/lib/redux/provider";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -48,13 +47,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${outfit.variable} ${playfair.variable} ${plusJakarta.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col font-sans">
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <AuthProvider>
-            <StoreProvider>
-              {children}
-            </StoreProvider>
-          </AuthProvider>
-        </ThemeProvider>
+        <ReduxProvider>
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+            {children}
+          </ThemeProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

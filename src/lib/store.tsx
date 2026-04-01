@@ -1,13 +1,25 @@
 "use client";
 
+import { useCallback } from "react";
+import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-  type ReactNode,
-} from "react";
+  addEvent as addEventAction,
+  updateEvent as updateEventAction,
+  deleteEvent as deleteEventAction,
+} from "./redux/slices/eventsSlice";
+import {
+  addTeamMember as addTeamMemberAction,
+  updateTeamMember as updateTeamMemberAction,
+  deleteTeamMember as deleteTeamMemberAction,
+} from "./redux/slices/teamSlice";
+import {
+  addMessage as addMessageAction,
+  updateMessage as updateMessageAction,
+  deleteMessage as deleteMessageAction,
+} from "./redux/slices/messagesSlice";
+import { updateSettings as updateSettingsAction } from "./redux/slices/settingsSlice";
+import { updateStats as updateStatsAction } from "./redux/slices/statsSlice";
+
 import type {
   Event,
   TeamMember,
@@ -15,183 +27,120 @@ import type {
   SiteSettings,
   Stats,
 } from "./types";
-import {
-  defaultEvents,
-  defaultTeamMembers,
-  defaultMessages,
-  defaultSettings,
-  defaultStats,
-} from "./data";
 
-interface StoreState {
+interface StoreHook {
+  // Data
   events: Event[];
   teamMembers: TeamMember[];
   messages: Message[];
   settings: SiteSettings;
   stats: Stats;
-}
-
-interface StoreActions {
-  // Events
+  // Event actions
   addEvent: (event: Event) => void;
-  updateEvent: (id: string, event: Partial<Event>) => void;
+  updateEvent: (id: string, updates: Partial<Event>) => void;
   deleteEvent: (id: string) => void;
-  // Team
+  // Team actions
   addTeamMember: (member: TeamMember) => void;
-  updateTeamMember: (id: string, member: Partial<TeamMember>) => void;
+  updateTeamMember: (id: string, updates: Partial<TeamMember>) => void;
   deleteTeamMember: (id: string) => void;
-  // Messages
+  // Message actions
+  addMessage: (message: Message) => void;
   updateMessage: (id: string, updates: Partial<Message>) => void;
   deleteMessage: (id: string) => void;
-  // Settings
-  updateSettings: (settings: Partial<SiteSettings>) => void;
-  // Stats
-  updateStats: (stats: Partial<Stats>) => void;
+  // Settings actions
+  updateSettings: (updates: Partial<SiteSettings>) => void;
+  // Stats actions
+  updateStats: (updates: Partial<Stats>) => void;
 }
 
-type Store = StoreState & StoreActions;
+export function useStore(): StoreHook {
+  const dispatch = useAppDispatch();
 
-const StoreContext = createContext<Store | null>(null);
+  const events = useAppSelector((state) => state.events.items);
+  const teamMembers = useAppSelector((state) => state.team.members);
+  const messages = useAppSelector((state) => state.messages.items);
+  const settings = useAppSelector((state) => state.settings.data);
+  const stats = useAppSelector((state) => state.stats.data);
 
-const STORAGE_KEY = "bupeic_store";
+  // Event actions
+  const addEvent = useCallback(
+    (event: Event) => dispatch(addEventAction(event)),
+    [dispatch]
+  );
+  const updateEvent = useCallback(
+    (id: string, updates: Partial<Event>) =>
+      dispatch(updateEventAction({ id, updates })),
+    [dispatch]
+  );
+  const deleteEvent = useCallback(
+    (id: string) => dispatch(deleteEventAction(id)),
+    [dispatch]
+  );
 
-function loadFromStorage(): StoreState | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) return JSON.parse(stored);
-  } catch {
-    // ignore parse errors
-  }
-  return null;
-}
-
-function saveToStorage(state: StoreState) {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch {
-    // ignore storage errors
-  }
-}
-
-export function StoreProvider({ children }: { children: ReactNode }) {
-  const [events, setEvents] = useState<Event[]>(defaultEvents);
-  const [teamMembers, setTeamMembers] =
-    useState<TeamMember[]>(defaultTeamMembers);
-  const [messages, setMessages] = useState<Message[]>(defaultMessages);
-  const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
-  const [stats, setStats] = useState<Stats>(defaultStats);
-  const [loaded, setLoaded] = useState(false);
-
-  // Load from localStorage on mount
-  useEffect(() => {
-    const stored = loadFromStorage();
-    if (stored) {
-      setEvents(stored.events);
-      setTeamMembers(stored.teamMembers);
-      setMessages(stored.messages);
-      setSettings(stored.settings);
-      setStats(stored.stats);
-    }
-    setLoaded(true);
-  }, []);
-
-  // Save to localStorage on change
-  useEffect(() => {
-    if (!loaded) return;
-    saveToStorage({ events, teamMembers, messages, settings, stats });
-  }, [events, teamMembers, messages, settings, stats, loaded]);
-
-  // ── Event Actions ──
-  const addEvent = useCallback((event: Event) => {
-    setEvents((prev) => [event, ...prev]);
-  }, []);
-
-  const updateEvent = useCallback((id: string, updates: Partial<Event>) => {
-    setEvents((prev) =>
-      prev.map((e) =>
-        e.id === id ? { ...e, ...updates, updatedAt: new Date().toISOString() } : e
-      )
-    );
-  }, []);
-
-  const deleteEvent = useCallback((id: string) => {
-    setEvents((prev) => prev.filter((e) => e.id !== id));
-  }, []);
-
-  // ── Team Actions ──
-  const addTeamMember = useCallback((member: TeamMember) => {
-    setTeamMembers((prev) => [...prev, member]);
-  }, []);
-
+  // Team actions
+  const addTeamMember = useCallback(
+    (member: TeamMember) => dispatch(addTeamMemberAction(member)),
+    [dispatch]
+  );
   const updateTeamMember = useCallback(
-    (id: string, updates: Partial<TeamMember>) => {
-      setTeamMembers((prev) =>
-        prev.map((m) => (m.id === id ? { ...m, ...updates } : m))
-      );
-    },
-    []
+    (id: string, updates: Partial<TeamMember>) =>
+      dispatch(updateTeamMemberAction({ id, updates })),
+    [dispatch]
+  );
+  const deleteTeamMember = useCallback(
+    (id: string) => dispatch(deleteTeamMemberAction(id)),
+    [dispatch]
   );
 
-  const deleteTeamMember = useCallback((id: string) => {
-    setTeamMembers((prev) => prev.filter((m) => m.id !== id));
-  }, []);
-
-  // ── Message Actions ──
+  // Message actions
+  const addMessage = useCallback(
+    (message: Message) => dispatch(addMessageAction(message)),
+    [dispatch]
+  );
   const updateMessage = useCallback(
-    (id: string, updates: Partial<Message>) => {
-      setMessages((prev) =>
-        prev.map((m) => (m.id === id ? { ...m, ...updates } : m))
-      );
-    },
-    []
+    (id: string, updates: Partial<Message>) =>
+      dispatch(updateMessageAction({ id, updates })),
+    [dispatch]
+  );
+  const deleteMessage = useCallback(
+    (id: string) => dispatch(deleteMessageAction(id)),
+    [dispatch]
   );
 
-  const deleteMessage = useCallback((id: string) => {
-    setMessages((prev) => prev.filter((m) => m.id !== id));
-  }, []);
-
-  // ── Settings Actions ──
-  const updateSettingsFn = useCallback(
-    (updates: Partial<SiteSettings>) => {
-      setSettings((prev) => ({ ...prev, ...updates }));
-    },
-    []
+  // Settings actions
+  const updateSettings = useCallback(
+    (updates: Partial<SiteSettings>) =>
+      dispatch(updateSettingsAction(updates)),
+    [dispatch]
   );
 
-  // ── Stats Actions ──
-  const updateStatsFn = useCallback((updates: Partial<Stats>) => {
-    setStats((prev) => ({ ...prev, ...updates }));
-  }, []);
-
-  return (
-    <StoreContext.Provider
-      value={{
-        events,
-        teamMembers,
-        messages,
-        settings,
-        stats,
-        addEvent,
-        updateEvent,
-        deleteEvent,
-        addTeamMember,
-        updateTeamMember,
-        deleteTeamMember,
-        updateMessage,
-        deleteMessage,
-        updateSettings: updateSettingsFn,
-        updateStats: updateStatsFn,
-      }}
-    >
-      {children}
-    </StoreContext.Provider>
+  // Stats actions
+  const updateStats = useCallback(
+    (updates: Partial<Stats>) => dispatch(updateStatsAction(updates)),
+    [dispatch]
   );
+
+  return {
+    events,
+    teamMembers,
+    messages,
+    settings,
+    stats,
+    addEvent,
+    updateEvent,
+    deleteEvent,
+    addTeamMember,
+    updateTeamMember,
+    deleteTeamMember,
+    addMessage,
+    updateMessage,
+    deleteMessage,
+    updateSettings,
+    updateStats,
+  };
 }
 
-export function useStore(): Store {
-  const ctx = useContext(StoreContext);
-  if (!ctx) throw new Error("useStore must be used within StoreProvider");
-  return ctx;
+// Keep StoreProvider as a no-op wrapper for backward compat in layout.tsx
+export function StoreProvider({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
 }
