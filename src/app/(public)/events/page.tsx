@@ -11,8 +11,13 @@ export const metadata: Metadata = {
     "Hackathon",
     "Innovation Summit",
     "Business Competition",
-    "BUP",
+    "BUP Workshops",
   ],
+  openGraph: {
+    title: "Events - BUP Entrepreneurship & Innovation Club",
+    description:
+      "Browse upcoming competitions, workshops, seminars, and networking events hosted by BUP EIC.",
+  },
 };
 
 export default function EventsPage() {

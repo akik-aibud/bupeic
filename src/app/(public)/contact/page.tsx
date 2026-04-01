@@ -11,6 +11,11 @@ export const metadata: Metadata = {
     "BUP Club Contact",
     "Dhaka 1216",
   ],
+  openGraph: {
+    title: "Contact Us - BUP Entrepreneurship & Innovation Club",
+    description:
+      "Reach out to BUP EIC via our contact form, phone, email, or visit us at Bangladesh University of Professionals.",
+  },
 };
 
 export default function ContactPage() {

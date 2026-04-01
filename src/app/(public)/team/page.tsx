@@ -10,8 +10,13 @@ export const metadata: Metadata = {
     "Executive Panel",
     "Committee Heads",
     "Student Leadership",
-    "BUP",
+    "BUP Club Members",
   ],
+  openGraph: {
+    title: "Our Team - BUP Entrepreneurship & Innovation Club",
+    description:
+      "Meet the dedicated leaders and committee heads behind BUP EIC's entrepreneurship initiatives.",
+  },
 };
 
 export default function TeamPage() {
