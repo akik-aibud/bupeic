@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Linkedin, Mail } from "lucide-react";
+import { ArrowRight, Mail } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -85,14 +85,10 @@ export function TeamSection() {
             >
               <Card className="relative h-full overflow-hidden border-2 border-transparent transition-all duration-300 group-hover:border-primary/30 group-hover:shadow-2xl">
                 {/* Background gradient that appears on hover */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/0 transition-colors duration-300"
-                  animate={{
-                    fromPrimary: hoveredMember === member.id ? "opacity-20" : "opacity-0",
-                  }}
-                  style={{
-                    background: `linear-gradient(135deg, hsl(var(--primary) / ${hoveredMember === member.id ? 0.1 : 0}), transparent)`,
-                  }}
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br transition-colors duration-300 ${
+                    hoveredMember === member.id ? "from-primary/10 to-primary/5" : "from-primary/0 to-primary/0"
+                  }`}
                 />
 
                 <CardContent className="relative flex flex-col items-center pt-8 pb-6">
@@ -159,17 +155,6 @@ export function TeamSection() {
                       transition={{ duration: 0.2 }}
                       className="mt-4 flex justify-center gap-2"
                     >
-                      {member.social?.linkedin && (
-                        <a
-                          href={member.social.linkedin}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex size-8 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
-                          aria-label="LinkedIn"
-                        >
-                          <Linkedin className="size-4" />
-                        </a>
-                      )}
                       {member.email && (
                         <a
                           href={`mailto:${member.email}`}
