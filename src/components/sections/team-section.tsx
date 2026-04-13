@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useStore } from "@/lib/store";
 import { useMemo } from "react";
@@ -30,29 +29,33 @@ export function TeamSection() {
   return (
     <section
       id="team"
-      className="relative overflow-hidden py-20 lg:py-28"
-      style={{
-        backgroundImage:
-          "radial-gradient(circle, hsl(var(--muted-foreground) / 0.06) 1px, transparent 1px)",
-        backgroundSize: "24px 24px",
-      }}
+      className="relative overflow-hidden bg-muted/30 py-24 lg:py-32"
     >
       <div className="container mx-auto max-w-6xl px-4 sm:px-6">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5 }}
-          className="mb-12 text-center"
+          className="mb-14 flex flex-wrap items-end justify-between gap-4"
         >
-          <span className="mb-4 inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-primary">
-            Our Team
-          </span>
-          <h2 className="font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Meet the Executive Panel
-          </h2>
-          <p className="mt-2 text-base text-muted-foreground">2025-2026</p>
+          <div>
+            <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary">
+              04 — The panel
+            </div>
+            <h2 className="mt-3 font-heading text-4xl font-black leading-[1.02] tracking-[-0.025em] text-foreground sm:text-5xl">
+              Executives{" "}
+              <span className="italic font-semibold text-primary">
+                2025 — 2026
+              </span>
+            </h2>
+          </div>
+          <Link
+            href="/team"
+            className="text-sm font-bold uppercase tracking-wider text-foreground underline decoration-primary decoration-2 underline-offset-[6px] hover:decoration-4"
+          >
+            Full team →
+          </Link>
         </motion.div>
 
         {/* Team grid */}
@@ -93,16 +96,6 @@ export function TeamSection() {
           ))}
         </div>
 
-        {/* Link */}
-        <div className="mt-10 text-center">
-          <Link
-            href="/team"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
-          >
-            Meet Full Team
-            <ArrowRight className="size-4" />
-          </Link>
-        </div>
       </div>
     </section>
   );

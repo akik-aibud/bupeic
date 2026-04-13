@@ -1,51 +1,58 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 
 export function CtaSection() {
   return (
-    <section
-      className="relative bg-primary py-20 sm:py-24"
-      style={{
-        clipPath: "polygon(0 8%, 100% 0%, 100% 100%, 0% 100%)",
-      }}
-    >
-      {/* Dot pattern overlay */}
+    <section className="relative overflow-hidden bg-background py-24 sm:py-32">
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
+        className="pointer-events-none absolute inset-0 -z-10 opacity-60"
         style={{
-          backgroundImage:
-            "radial-gradient(circle, white 1px, transparent 1px)",
-          backgroundSize: "20px 20px",
+          background:
+            "radial-gradient(800px 400px at 50% 100%, hsl(var(--primary) / 0.14), transparent 70%)",
         }}
       />
 
-      <div className="container relative mx-auto max-w-4xl px-4 pt-8 text-center sm:px-6">
-        <h2 className="font-heading text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
-          Ready to Make an Impact?
-        </h2>
-        <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-white/85">
-          Join BUP EIC and be part of a community that turns bold ideas into
-          real-world impact. Whether you are a budding entrepreneur or a creative
-          thinker, there is a place for you here.
-        </p>
+      <div className="container mx-auto max-w-5xl px-4 text-center sm:px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary">
+            05 — Your move
+          </div>
+          <h2 className="mx-auto mt-4 max-w-3xl font-heading text-5xl font-black leading-[0.98] tracking-[-0.035em] text-foreground sm:text-6xl lg:text-7xl">
+            Turn ideas into{" "}
+            <span className="italic font-semibold text-primary">
+              impact.
+            </span>
+          </h2>
+          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted-foreground">
+            Whether you&apos;re a builder, a thinker, or just curious — there
+            is a place for you here. Join the club, join a competition, or
+            just drop us a line.
+          </p>
 
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Button
-            className="h-11 rounded-full bg-white px-8 font-semibold text-primary shadow-md hover:bg-white/90"
-            render={<Link href="/contact" />}
-          >
-            Join the Club
-          </Button>
-          <Button
-            variant="outline"
-            className="h-11 rounded-full border-white/40 px-8 text-white hover:bg-white/10 hover:text-white"
-            render={<Link href="/contact" />}
-          >
-            Contact Us
-          </Button>
-        </div>
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+            <Link
+              href="/innoventure"
+              className="group inline-flex items-center gap-3 bg-foreground px-8 py-4 text-sm font-bold uppercase tracking-wider text-background transition-transform hover:-translate-y-0.5"
+            >
+              Join Innoventure 1.0
+              <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </Link>
+            <Link
+              href="/contact"
+              className="text-sm font-bold uppercase tracking-wider text-foreground underline decoration-primary decoration-2 underline-offset-[6px] hover:decoration-4"
+            >
+              Say hello →
+            </Link>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
