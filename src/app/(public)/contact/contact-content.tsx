@@ -2,14 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
-import {
-  MapPin,
-  Phone,
-  Mail,
-  Send,
-  CheckCircle,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { MapPin, Phone, Mail, ArrowUpRight, CheckCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -68,10 +61,6 @@ export function ContactContent() {
     }, 1000);
   };
 
-  const resetForm = () => {
-    setSubmitted(false);
-  };
-
   const activeSocials = Object.entries(settings.social).filter(
     ([, url]) => url && url.trim() !== ""
   );
@@ -79,79 +68,99 @@ export function ContactContent() {
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden py-16 sm:py-20 lg:py-24">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent" />
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+      <section className="relative overflow-hidden pt-24 pb-12 sm:pt-32 lg:pb-20">
+        <div
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background:
+              "radial-gradient(900px 500px at 85% 0%, hsl(var(--primary) / 0.12), transparent 60%)",
+          }}
+        />
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6">
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <span className="text-xs font-semibold uppercase tracking-wider text-primary">
-              Contact
-            </span>
-            <h1 className="mt-3 font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-              Get in Touch
+            <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary">
+              00 — Contact
+            </div>
+            <h1 className="mt-4 max-w-4xl font-heading text-[clamp(2.5rem,6.5vw,5.5rem)] font-black leading-[0.95] tracking-[-0.035em] text-foreground">
+              Let&apos;s make{" "}
+              <span className="italic font-semibold text-primary">
+                something.
+              </span>
             </h1>
-            <div className="mt-4 h-1 w-16 rounded-full bg-primary" />
-            <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
-              Have questions or want to collaborate? We&apos;d love to hear from
-              you.
+            <p className="mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+              Got a question, a sponsorship, or a wild idea? Drop it in the
+              form below — or reach us directly. We reply fast.
             </p>
           </motion.div>
         </div>
       </section>
 
       {/* Form + Info */}
-      <section className="py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="grid gap-10 lg:grid-cols-5 lg:gap-16">
-            {/* Form (wider — left) */}
+      <section className="py-16 lg:py-24">
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="grid gap-16 border-t border-border/60 pt-16 lg:grid-cols-12">
+            {/* Form */}
             <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.5 }}
-              className="lg:col-span-3"
+              className="lg:col-span-7"
             >
-              <div className="rounded-xl border border-border bg-white p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] sm:p-8">
+              <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary">
+                01 — Send a message
+              </div>
+              <h2 className="mt-3 max-w-lg font-heading text-4xl font-black leading-[1.02] tracking-[-0.025em] text-foreground sm:text-5xl">
+                Write us a{" "}
+                <span className="italic font-semibold text-primary">line.</span>
+              </h2>
+
+              <div className="mt-10">
                 {submitted ? (
-                  <div className="border-l-4 border-l-emerald-500 py-10 pl-6 text-left">
-                    <div className="mb-4 flex size-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                  <div className="border-y border-primary/30 bg-primary/[0.04] py-10 pl-8">
+                    <div className="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
                       <CheckCircle className="size-7" />
                     </div>
-                    <h3 className="font-heading text-xl font-bold text-foreground sm:text-2xl">
-                      Message Sent!
+                    <h3 className="mt-6 font-heading text-3xl font-black tracking-[-0.02em] text-foreground">
+                      Message sent.
                     </h3>
-                    <p className="mt-2 text-base text-muted-foreground">
-                      Thank you for reaching out. We&apos;ll get back to you
-                      soon.
+                    <p className="mt-2 max-w-md text-base text-muted-foreground">
+                      Thanks for reaching out — we&apos;ll get back to you
+                      shortly.
                     </p>
-                    <Button onClick={resetForm} className="mt-6" size="lg">
-                      Send Another Message
-                    </Button>
+                    <button
+                      type="button"
+                      onClick={() => setSubmitted(false)}
+                      className="mt-6 text-sm font-bold uppercase tracking-wider text-foreground underline decoration-primary decoration-2 underline-offset-[6px]"
+                    >
+                      Send another →
+                    </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-5">
-                    <div className="grid gap-5 sm:grid-cols-2">
-                      <div className="space-y-2">
+                  <form onSubmit={handleSubmit} className="space-y-8">
+                    <div className="grid gap-8 sm:grid-cols-2">
+                      <div className="space-y-2 border-b border-border/60 pb-2">
                         <Label
                           htmlFor="name"
-                          className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                          className="text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground"
                         >
-                          Name
+                          Your name
                         </Label>
                         <Input
                           id="name"
-                          placeholder="Your full name"
+                          placeholder="Jane Doe"
                           required
-                          className="h-11 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                          className="h-10 border-0 bg-transparent px-0 text-base shadow-none focus-visible:ring-0"
                         />
                       </div>
-                      <div className="space-y-2">
+                      <div className="space-y-2 border-b border-border/60 pb-2">
                         <Label
                           htmlFor="email"
-                          className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                          className="text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground"
                         >
                           Email
                         </Label>
@@ -160,15 +169,15 @@ export function ContactContent() {
                           type="email"
                           placeholder="you@example.com"
                           required
-                          className="h-11 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                          className="h-10 border-0 bg-transparent px-0 text-base shadow-none focus-visible:ring-0"
                         />
                       </div>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-2 border-b border-border/60 pb-2">
                       <Label
                         htmlFor="subject"
-                        className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                        className="text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground"
                       >
                         Subject
                       </Label>
@@ -176,118 +185,107 @@ export function ContactContent() {
                         id="subject"
                         placeholder="What is this about?"
                         required
-                        className="h-11 focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                        className="h-10 border-0 bg-transparent px-0 text-base shadow-none focus-visible:ring-0"
                       />
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-2 border-b border-border/60 pb-2">
                       <Label
                         htmlFor="message"
-                        className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                        className="text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground"
                       >
                         Message
                       </Label>
                       <Textarea
                         id="message"
-                        placeholder="Write your message here..."
+                        placeholder="Tell us everything."
                         rows={5}
                         required
-                        className="resize-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                        className="resize-none border-0 bg-transparent px-0 text-base shadow-none focus-visible:ring-0"
                       />
                     </div>
 
-                    <Button
+                    <button
                       type="submit"
-                      size="lg"
-                      className="h-12 w-full rounded-lg text-sm font-semibold"
                       disabled={submitting}
+                      className="group inline-flex items-center gap-3 bg-foreground px-8 py-4 text-sm font-bold uppercase tracking-wider text-background transition-transform hover:-translate-y-0.5 disabled:opacity-60"
                     >
-                      {submitting ? (
-                        "Sending..."
-                      ) : (
-                        <>
-                          Send Message
-                          <Send className="ml-2 size-4" />
-                        </>
-                      )}
-                    </Button>
+                      {submitting ? "Sending…" : "Send message"}
+                      <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </button>
                   </form>
                 )}
               </div>
             </motion.div>
 
-            {/* Contact Info (right) */}
+            {/* Info */}
             <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="space-y-5 lg:col-span-2"
+              className="space-y-10 lg:col-span-5"
             >
-              {/* Address card */}
-              <div className="rounded-xl border border-border bg-white p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
-                <div className="flex gap-4">
-                  <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <MapPin className="size-5" />
-                  </div>
+              <div>
+                <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary">
+                  02 — Find us
+                </div>
+                <h2 className="mt-3 font-heading text-4xl font-black leading-[1.02] tracking-[-0.025em] text-foreground sm:text-5xl">
+                  On the{" "}
+                  <span className="italic font-semibold text-primary">
+                    ground.
+                  </span>
+                </h2>
+              </div>
+
+              <ul className="divide-y divide-border/60 border-y border-border/60">
+                <li className="grid grid-cols-[auto_1fr] items-start gap-4 py-5">
+                  <MapPin className="mt-1 size-5 text-primary" />
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
                       Address
                     </p>
-                    <p className="mt-1.5 text-sm text-foreground leading-relaxed">
+                    <p className="mt-1 text-base leading-relaxed text-foreground">
                       {settings.address}
                     </p>
                   </div>
-                </div>
-              </div>
-
-              {/* Phone card */}
-              <div className="rounded-xl border border-border bg-white p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
-                <div className="flex gap-4">
-                  <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <Phone className="size-5" />
-                  </div>
+                </li>
+                <li className="grid grid-cols-[auto_1fr] items-start gap-4 py-5">
+                  <Phone className="mt-1 size-5 text-primary" />
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
                       Phone
                     </p>
                     <a
                       href={`tel:+88${settings.phone.replace(/[^0-9]/g, "")}`}
-                      className="mt-1.5 block text-sm text-foreground transition-colors hover:text-primary"
+                      className="mt-1 block text-base text-foreground hover:text-primary"
                     >
                       {settings.phone}
                     </a>
                   </div>
-                </div>
-              </div>
-
-              {/* Email card */}
-              <div className="rounded-xl border border-border bg-white p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
-                <div className="flex gap-4">
-                  <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <Mail className="size-5" />
-                  </div>
+                </li>
+                <li className="grid grid-cols-[auto_1fr] items-start gap-4 py-5">
+                  <Mail className="mt-1 size-5 text-primary" />
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
                       Email
                     </p>
                     <a
                       href={`mailto:${settings.email}`}
-                      className="mt-1.5 block text-sm text-foreground transition-colors hover:text-primary"
+                      className="mt-1 block text-base text-foreground hover:text-primary"
                     >
                       {settings.email}
                     </a>
                   </div>
-                </div>
-              </div>
+                </li>
+              </ul>
 
-              {/* Social Links */}
               {activeSocials.length > 0 && (
-                <div className="pt-2">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Follow Us
+                <div>
+                  <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
+                    Follow us
                   </p>
-                  <div className="mt-3 flex flex-wrap gap-2">
+                  <div className="mt-4 flex flex-wrap gap-5">
                     {activeSocials.map(([platform, url]) => {
                       const Icon = socialIcons[platform];
                       if (!Icon) return null;
@@ -297,10 +295,10 @@ export function ContactContent() {
                           href={url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex size-10 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+                          className="text-muted-foreground transition-colors hover:text-primary"
                           aria-label={socialLabels[platform] ?? platform}
                         >
-                          <Icon className="size-4" />
+                          <Icon className="size-5" />
                         </a>
                       );
                     })}
@@ -312,21 +310,21 @@ export function ContactContent() {
         </div>
       </section>
 
-      {/* Map — full width below */}
-      <section className="pb-16 sm:pb-20 lg:pb-24">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      {/* Map */}
+      <section className="pb-24 lg:pb-32">
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6">
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.5 }}
-            className="overflow-hidden rounded-xl border border-border shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
+            className="border border-border/60"
           >
             <iframe
               title="Bangladesh University of Professionals Location"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3650.3783845280424!2d90.34988287609367!3d23.80376798672766!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c12497614b2d%3A0x2793eb2d76dfd0b5!2sBangladesh%20University%20of%20Professionals%20(BUP)!5e0!3m2!1sen!2sbd!4v1700000000000!5m2!1sen!2sbd"
               width="100%"
-              className="h-64 sm:h-80 lg:h-96"
+              className="h-72 grayscale sm:h-96 lg:h-[450px]"
               style={{ border: 0 }}
               allowFullScreen
               loading="lazy"

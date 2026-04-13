@@ -1,28 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Eye,
-  Target,
-  Lightbulb,
-  Trophy,
-  Handshake,
-  GraduationCap,
-  ArrowRight,
-} from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { useStore } from "@/lib/store";
 
-const fadeIn = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  transition: { duration: 0.5 },
-};
-
 const fadeInView = {
-  initial: { opacity: 0 },
-  whileInView: { opacity: 1 },
-  viewport: { once: true },
+  initial: { opacity: 0, y: 16 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-80px" },
   transition: { duration: 0.5 },
 };
 
@@ -32,28 +18,24 @@ const activities = [
     title: "Workshops & Seminars",
     description:
       "Hands-on sessions on business planning, design thinking, pitching, and emerging technologies.",
-    icon: Lightbulb,
   },
   {
     number: "02",
     title: "Competitions",
     description:
       "Startup pitch contests, case competitions, and hackathons that challenge you to think big.",
-    icon: Trophy,
   },
   {
     number: "03",
     title: "Networking Events",
     description:
       "Connect with entrepreneurs, industry leaders, and alumni who can guide your journey.",
-    icon: Handshake,
   },
   {
     number: "04",
     title: "Mentorship Programs",
     description:
       "One-on-one mentoring with experienced founders and professionals to refine your ideas.",
-    icon: GraduationCap,
   },
 ];
 
@@ -80,13 +62,13 @@ const milestones = [
     year: "2023",
     title: "National Recognition",
     description:
-      "BUP EIC was recognized as one of the most active entrepreneurship clubs at the national university level.",
+      "Recognised as one of the most active entrepreneurship clubs at the national university level.",
   },
   {
     year: "2024",
-    title: "100+ Members Milestone",
+    title: "100+ Members",
     description:
-      "Crossed 100 active members and expanded to 6 dedicated committees for specialized operations.",
+      "Crossed 100 active members and expanded to 6 dedicated committees for specialised operations.",
   },
   {
     year: "2025",
@@ -109,67 +91,80 @@ export function AboutContent() {
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden py-16 sm:py-20 lg:py-24">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent" />
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
-          <motion.div {...fadeIn}>
-            <span className="text-xs font-semibold uppercase tracking-wider text-primary">
-              About Us
-            </span>
-            <h1 className="mt-3 font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-              About BUP EIC
+      <section className="relative overflow-hidden pt-24 pb-16 sm:pt-32 lg:pb-24">
+        <div
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background:
+              "radial-gradient(900px 500px at 85% 0%, hsl(var(--primary) / 0.12), transparent 60%)",
+          }}
+        />
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6">
+          <motion.div {...fadeInView}>
+            <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary">
+              00 — About the club
+            </div>
+            <h1 className="mt-4 max-w-4xl font-heading text-[clamp(2.5rem,6.5vw,5.5rem)] font-black leading-[0.95] tracking-[-0.035em] text-foreground">
+              A student-led home for{" "}
+              <span className="italic font-semibold text-primary">
+                bold ideas.
+              </span>
             </h1>
-            <div className="mt-4 h-1 w-16 rounded-full bg-primary" />
-            <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
-              Innovate, Collaborate, and Elevate
+            <p className="mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+              BUP Entrepreneurship &amp; Innovation Club is where dreamers,
+              doers and builders at Bangladesh University of Professionals
+              turn classroom ideas into real ventures — through events,
+              workshops, mentorship, and a national stage.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Who We Are — two-column */}
-      <section className="py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="grid gap-12 lg:grid-cols-5 lg:gap-16">
-            {/* Text — left */}
-            <motion.div {...fadeInView} className="lg:col-span-3">
-              <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
-                Who We Are
-              </span>
-              <h2 className="mt-4 font-heading text-2xl font-bold text-foreground sm:text-3xl">
-                Building the next generation of entrepreneurs
+      {/* Who We Are + stats */}
+      <section className="py-20 lg:py-28">
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="grid gap-16 lg:grid-cols-12">
+            <motion.div {...fadeInView} className="lg:col-span-7">
+              <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary">
+                01 — Who we are
+              </div>
+              <h2 className="mt-3 font-heading text-4xl font-black leading-[1.02] tracking-[-0.025em] text-foreground sm:text-5xl">
+                Building the next generation of{" "}
+                <span className="italic font-semibold text-primary">
+                  entrepreneurs.
+                </span>
               </h2>
-              <p className="mt-6 text-base leading-relaxed text-muted-foreground sm:text-lg">
-                {settings.description} Founded at Bangladesh University of
-                Professionals, we are a community of dreamers, doers, and
-                innovators committed to building the next generation of
-                entrepreneurs.
-              </p>
-              <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-                We believe that entrepreneurship is not just about starting
-                businesses &mdash; it&apos;s about solving problems, creating
-                value, and making a positive difference in the world. Through
-                events, workshops, and mentorship, we equip our members with the
-                skills and mindset to thrive.
-              </p>
+              <div className="mt-8 space-y-5 text-base leading-relaxed text-muted-foreground">
+                <p>
+                  {settings.description} We are a community of dreamers, doers,
+                  and innovators committed to building the next generation of
+                  entrepreneurs.
+                </p>
+                <p>
+                  We believe entrepreneurship is not just about starting
+                  businesses — it&apos;s about solving problems, creating
+                  value, and making a positive difference in the world.
+                  Through events, workshops, and mentorship, we equip members
+                  with the skills and mindset to thrive.
+                </p>
+              </div>
             </motion.div>
 
-            {/* Stats — right */}
             <motion.div
               {...fadeInView}
               transition={{ duration: 0.5, delay: 0.15 }}
-              className="lg:col-span-2"
+              className="lg:col-span-5"
             >
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-px bg-border/60">
                 {keyStats.map((stat) => (
                   <div
                     key={stat.label}
-                    className="rounded-xl border border-border bg-white p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
+                    className="bg-background p-6 sm:p-7"
                   >
-                    <p className="font-heading text-2xl font-bold text-primary sm:text-3xl">
+                    <p className="font-heading text-5xl font-black tracking-[-0.03em] text-foreground sm:text-6xl">
                       {stat.value}
                     </p>
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <p className="mt-2 text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
                       {stat.label}
                     </p>
                   </div>
@@ -180,160 +175,178 @@ export function AboutContent() {
         </div>
       </section>
 
-      {/* Vision & Mission — side by side with border-l accent */}
-      <section className="bg-muted/30 py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <motion.div {...fadeInView} className="mb-10">
-            <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
-              Our Purpose
-            </span>
+      {/* Vision & Mission */}
+      <section className="border-y border-border/60 bg-muted/30 py-20 lg:py-28">
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6">
+          <motion.div {...fadeInView}>
+            <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary">
+              02 — Our purpose
+            </div>
           </motion.div>
 
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="mt-10 grid gap-px bg-border/60 md:grid-cols-2">
             <motion.div
               {...fadeInView}
-              className="rounded-xl border border-border border-l-4 border-l-primary bg-white p-8 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
+              className="bg-background p-8 sm:p-10"
             >
-              <div className="flex items-center gap-3">
-                <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10">
-                  <Eye className="size-5 text-primary" />
-                </div>
-                <h3 className="font-heading text-xl font-bold text-foreground sm:text-2xl">
-                  Our Vision
-                </h3>
-              </div>
-              <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-                To be the leading platform for student entrepreneurship in
-                Bangladesh, inspiring a culture of innovation and self-reliance
-                among university students nationwide.
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-primary">
+                Vision
+              </p>
+              <h3 className="mt-3 font-heading text-3xl font-black tracking-[-0.025em] text-foreground sm:text-4xl">
+                Lead student entrepreneurship in{" "}
+                <span className="italic font-semibold text-primary">
+                  Bangladesh.
+                </span>
+              </h3>
+              <p className="mt-5 text-base leading-relaxed text-muted-foreground">
+                Be the leading platform for student entrepreneurship in
+                Bangladesh, inspiring a culture of innovation and
+                self-reliance among university students nationwide.
               </p>
             </motion.div>
 
             <motion.div
               {...fadeInView}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="rounded-xl border border-border border-l-4 border-l-primary bg-white p-8 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
+              className="bg-background p-8 sm:p-10"
             >
-              <div className="flex items-center gap-3">
-                <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10">
-                  <Target className="size-5 text-primary" />
-                </div>
-                <h3 className="font-heading text-xl font-bold text-foreground sm:text-2xl">
-                  Our Mission
-                </h3>
-              </div>
-              <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-                To foster entrepreneurial thinking, provide practical learning
-                opportunities, and build a supportive community where students
-                can develop, test, and launch their ideas with confidence.
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-primary">
+                Mission
+              </p>
+              <h3 className="mt-3 font-heading text-3xl font-black tracking-[-0.025em] text-foreground sm:text-4xl">
+                Test ideas. Launch{" "}
+                <span className="italic font-semibold text-primary">
+                  with confidence.
+                </span>
+              </h3>
+              <p className="mt-5 text-base leading-relaxed text-muted-foreground">
+                Foster entrepreneurial thinking, provide practical learning
+                opportunities, and build a supportive community where
+                students can develop, test, and launch ideas with confidence.
               </p>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* What We Do — numbered 2x2 grid */}
-      <section className="py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <motion.div {...fadeInView} className="mb-12">
-            <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
-              What We Do
-            </span>
-            <h2 className="mt-4 font-heading text-2xl font-bold text-foreground sm:text-3xl">
-              Programs that nurture entrepreneurial talent
+      {/* What we do — editorial list */}
+      <section className="py-20 lg:py-28">
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6">
+          <motion.div {...fadeInView} className="mb-14">
+            <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary">
+              03 — What we do
+            </div>
+            <h2 className="mt-3 max-w-2xl font-heading text-4xl font-black leading-[1.02] tracking-[-0.025em] text-foreground sm:text-5xl">
+              Programs that{" "}
+              <span className="italic font-semibold text-primary">
+                nurture talent.
+              </span>
             </h2>
           </motion.div>
 
-          <div className="grid gap-6 sm:grid-cols-2">
-            {activities.map((activity, i) => (
-              <motion.div
-                key={activity.title}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
+          <ul className="divide-y divide-border/60 border-y border-border/60">
+            {activities.map((a, i) => (
+              <motion.li
+                key={a.title}
+                initial={{ opacity: 0, x: 16 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.4, delay: i * 0.08 }}
-                className="group rounded-xl border border-border bg-white p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-shadow hover:shadow-md"
+                className="group grid grid-cols-[auto_1fr] items-baseline gap-6 py-7 transition-colors hover:bg-primary/[0.03] sm:py-8"
               >
-                <div className="flex items-start gap-4">
-                  <span className="font-heading text-3xl font-bold text-primary/20">
-                    {activity.number}
-                  </span>
-                  <div>
-                    <h3 className="font-heading text-lg font-semibold text-foreground">
-                      {activity.title}
-                    </h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
-                      {activity.description}
-                    </p>
-                  </div>
+                <span className="font-heading text-lg font-bold text-primary/70">
+                  {a.number}
+                </span>
+                <div>
+                  <h3 className="font-heading text-2xl font-black tracking-[-0.02em] text-foreground sm:text-3xl">
+                    {a.title}
+                  </h3>
+                  <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                    {a.description}
+                  </p>
                 </div>
-              </motion.div>
+              </motion.li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
-      {/* Timeline — vertical with year circles */}
-      <section className="bg-muted/30 py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <motion.div {...fadeInView} className="mb-12">
-            <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
-              Our Journey
-            </span>
-            <h2 className="mt-4 font-heading text-2xl font-bold text-foreground sm:text-3xl">
-              Key milestones in our growth
+      {/* Journey / Timeline */}
+      <section className="bg-muted/30 py-20 lg:py-28">
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6">
+          <motion.div {...fadeInView} className="mb-14">
+            <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary">
+              04 — The journey
+            </div>
+            <h2 className="mt-3 max-w-2xl font-heading text-4xl font-black leading-[1.02] tracking-[-0.025em] text-foreground sm:text-5xl">
+              Milestones we&apos;ve{" "}
+              <span className="italic font-semibold text-primary">
+                built.
+              </span>
             </h2>
           </motion.div>
 
-          <div className="relative ml-6 border-l-2 border-primary/20 pl-10 sm:ml-8 sm:pl-12">
-            {milestones.map((milestone, i) => (
-              <motion.div
-                key={`${milestone.year}-${milestone.title}`}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.06 }}
-                className="relative mb-10 last:mb-0"
+          <ol className="relative grid gap-px bg-border/60 sm:grid-cols-2 lg:grid-cols-3">
+            {milestones.map((m, i) => (
+              <motion.li
+                key={`${m.year}-${m.title}`}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.45, delay: i * 0.06 }}
+                className="group bg-muted/30 p-7 transition-colors hover:bg-background sm:p-8"
               >
-                {/* Year circle on the line */}
-                <div className="absolute -left-[calc(2.5rem+1.25rem+1px)] flex size-10 items-center justify-center rounded-full border-2 border-primary bg-white text-xs font-bold text-primary sm:-left-[calc(3rem+1.25rem+1px)] sm:size-10">
-                  {milestone.year}
+                <div className="flex items-baseline gap-3">
+                  <span className="font-heading text-4xl font-black tracking-[-0.03em] text-primary">
+                    {m.year}
+                  </span>
+                  <span className="h-px flex-1 bg-border transition-all group-hover:bg-primary" />
                 </div>
-
-                <h3 className="text-lg font-semibold text-foreground">
-                  {milestone.title}
+                <h3 className="mt-4 font-heading text-xl font-black tracking-[-0.02em] text-foreground">
+                  {m.title}
                 </h3>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground sm:text-base">
-                  {milestone.description}
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {m.description}
                 </p>
-              </motion.div>
+              </motion.li>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <motion.div
-            {...fadeInView}
-            className="rounded-2xl border border-border bg-gradient-to-r from-primary/5 to-transparent p-8 sm:p-12"
-          >
-            <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2 className="font-heading text-2xl font-bold text-foreground sm:text-3xl">
-                  Want to join us?
-                </h2>
-                <p className="mt-2 text-base text-muted-foreground">
-                  Be part of BUP&apos;s most vibrant entrepreneurship community.
-                </p>
-              </div>
+      <section className="relative py-24 sm:py-32">
+        <div
+          className="pointer-events-none absolute inset-0 -z-10 opacity-60"
+          style={{
+            background:
+              "radial-gradient(800px 400px at 50% 100%, hsl(var(--primary) / 0.14), transparent 70%)",
+          }}
+        />
+        <div className="container mx-auto max-w-5xl px-4 text-center sm:px-6">
+          <motion.div {...fadeInView}>
+            <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary">
+              05 — Want in?
+            </div>
+            <h2 className="mx-auto mt-4 max-w-3xl font-heading text-5xl font-black leading-[0.98] tracking-[-0.035em] text-foreground sm:text-6xl">
+              Be part of BUP&apos;s most{" "}
+              <span className="italic font-semibold text-primary">
+                vibrant community.
+              </span>
+            </h2>
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               <Link
                 href="/contact"
-                className="inline-flex h-12 items-center gap-2 rounded-lg bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                className="group inline-flex items-center gap-3 bg-foreground px-8 py-4 text-sm font-bold uppercase tracking-wider text-background transition-transform hover:-translate-y-0.5"
               >
-                Get in Touch
-                <ArrowRight className="size-4" />
+                Get in touch
+                <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </Link>
+              <Link
+                href="/innoventure"
+                className="text-sm font-bold uppercase tracking-wider text-foreground underline decoration-primary decoration-2 underline-offset-[6px] hover:decoration-4"
+              >
+                See Innoventure 1.0 →
               </Link>
             </div>
           </motion.div>

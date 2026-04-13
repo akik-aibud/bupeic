@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -48,8 +49,16 @@ export function Navbar() {
     >
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-1.5">
-          <span className="text-xl font-heading font-bold text-foreground sm:text-2xl">
+        <Link href="/" className="flex items-center gap-2.5">
+          <Image
+            src="/eic-icon.png"
+            alt="BUP EIC"
+            width={200}
+            height={200}
+            className="h-9 w-auto"
+            priority
+          />
+          <span className="text-lg font-heading font-black tracking-tight text-foreground sm:text-xl">
             BUP <span className="text-primary">EIC</span>
           </span>
         </Link>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { MapPin, Phone, Mail } from "lucide-react";
 import { useStore } from "@/lib/store";
 
@@ -61,12 +62,21 @@ export function Footer() {
       <div className="container mx-auto px-4 py-12 sm:py-16">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Branding */}
-          <div className="space-y-3">
-            <span className="text-xl font-heading font-bold text-foreground">
-              BUP <span className="text-primary">EIC</span>
-            </span>
+          <div className="space-y-4">
+            <Link href="/" className="flex items-center gap-3">
+              <Image
+                src="/eic-icon.png"
+                alt="BUP EIC"
+                width={200}
+                height={200}
+                className="h-11 w-auto"
+              />
+              <span className="text-xl font-heading font-black tracking-tight text-foreground">
+                BUP <span className="text-primary">EIC</span>
+              </span>
+            </Link>
             <p className="text-sm font-medium text-primary">
-              Innovate, Collaborate, and Elevate
+              Innovate, Collaborate, Elevate
             </p>
             <p className="text-sm leading-relaxed text-muted-foreground">
               {settings.description}

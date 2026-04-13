@@ -27,10 +27,7 @@ export function TeamSection() {
   }, [teamMembers]);
 
   return (
-    <section
-      id="team"
-      className="relative overflow-hidden bg-muted/30 py-24 lg:py-32"
-    >
+    <section id="team" className="relative overflow-hidden bg-muted/30 py-24 lg:py-32">
       <div className="container mx-auto max-w-6xl px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -45,9 +42,7 @@ export function TeamSection() {
             </div>
             <h2 className="mt-3 font-heading text-4xl font-black leading-[1.02] tracking-[-0.025em] text-foreground sm:text-5xl">
               Executives{" "}
-              <span className="italic font-semibold text-primary">
-                2025 — 2026
-              </span>
+              <span className="italic font-semibold text-primary">2025 — 2026</span>
             </h2>
           </div>
           <Link
@@ -58,44 +53,49 @@ export function TeamSection() {
           </Link>
         </motion.div>
 
-        {/* Team grid */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-px bg-border/60 lg:grid-cols-4">
           {executives.map((member, index) => (
             <motion.div
               key={member.id}
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.4, delay: index * 0.08 }}
-              className="flex flex-col items-center rounded-2xl border border-border bg-white p-6 text-center"
+              transition={{ duration: 0.45, delay: index * 0.08 }}
+              className="group relative flex flex-col items-start bg-muted/30 p-6 transition-colors hover:bg-background sm:p-8"
             >
-              <Avatar className="size-20 text-lg">
+              <span className="font-heading text-xs font-bold uppercase tracking-[0.22em] text-primary/70">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+
+              <Avatar className="mt-4 size-24 rounded-none">
                 {member.avatar ? (
-                  <AvatarImage src={member.avatar} alt={member.name} />
+                  <AvatarImage
+                    src={member.avatar}
+                    alt={member.name}
+                    className="rounded-none object-cover grayscale transition-all group-hover:grayscale-0"
+                  />
                 ) : null}
-                <AvatarFallback className="bg-primary/10 text-lg font-semibold text-primary">
+                <AvatarFallback className="rounded-none bg-foreground text-xl font-black text-background">
                   {getInitials(member.name)}
                 </AvatarFallback>
               </Avatar>
 
-              {/* Accent line */}
-              <div className="mx-auto mt-4 h-0.5 w-8 rounded-full bg-primary" />
+              <div className="mt-6 h-px w-10 bg-primary transition-all group-hover:w-20" />
 
-              <h3 className="mt-3 font-heading text-base font-semibold text-foreground">
+              <h3 className="mt-4 font-heading text-xl font-black leading-tight tracking-[-0.02em] text-foreground">
                 {member.name}
               </h3>
-              <p className="mt-0.5 text-sm font-medium text-primary">
+              <p className="mt-1 text-sm font-semibold uppercase tracking-wider text-primary">
                 {member.position}
               </p>
               {member.department && (
-                <p className="mt-0.5 text-xs text-muted-foreground">
+                <p className="mt-1 text-xs text-muted-foreground">
                   {member.department}
                 </p>
               )}
             </motion.div>
           ))}
         </div>
-
       </div>
     </section>
   );

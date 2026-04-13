@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { Calendar, MapPin, Users, Clock, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Calendar, MapPin, ArrowUpRight, Sparkles } from "lucide-react";
 import { useStore } from "@/lib/store";
 
 type FilterValue = "all" | "upcoming" | "past";
@@ -16,45 +16,25 @@ const categoryLabels: Record<string, string> = {
   fest: "Fest",
 };
 
-const categoryBadgeColors: Record<string, string> = {
-  competition: "bg-primary/10 text-primary",
-  workshop: "bg-blue-50 text-blue-700",
-  seminar: "bg-amber-50 text-amber-700",
-  networking: "bg-purple-50 text-purple-700",
-  fest: "bg-rose-50 text-rose-700",
-};
-
-const categoryBorderColors: Record<string, string> = {
-  competition: "border-t-primary",
-  workshop: "border-t-blue-500",
-  seminar: "border-t-amber-500",
-  networking: "border-t-purple-500",
-  fest: "border-t-rose-500",
-};
-
 function formatDate(dateStr: string) {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
-function formatDateShort(dateStr: string) {
-  const date = new Date(dateStr);
+  const d = new Date(dateStr);
   return {
-    day: date.toLocaleDateString("en-US", { day: "numeric" }),
-    month: date.toLocaleDateString("en-US", { month: "short" }).toUpperCase(),
-    year: date.toLocaleDateString("en-US", { year: "numeric" }),
+    day: d.getDate().toString(),
+    month: d.toLocaleDateString("en-US", { month: "short" }).toUpperCase(),
+    year: d.getFullYear().toString(),
+    full: d.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    }),
   };
 }
 
 const fadeInView = {
-  initial: { opacity: 0 },
-  whileInView: { opacity: 1 },
-  viewport: { once: true } as const,
-  transition: { duration: 0.4 },
+  initial: { opacity: 0, y: 16 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-80px" } as const,
+  transition: { duration: 0.5 },
 };
 
 export function EventsContent() {
@@ -89,302 +69,236 @@ export function EventsContent() {
     });
   }, [filtered]);
 
-  // Find the featured upcoming event (first upcoming/ongoing)
-  const featuredEvent = useMemo(() => {
-    return sorted.find(
-      (e) => e.status === "upcoming" || e.status === "ongoing"
-    );
-  }, [sorted]);
-
-  const restEvents = useMemo(() => {
-    if (!featuredEvent) return sorted;
-    return sorted.filter((e) => e.id !== featuredEvent.id);
-  }, [sorted, featuredEvent]);
-
   const filters: { label: string; value: FilterValue }[] = [
     { label: "All", value: "all" },
     { label: "Upcoming", value: "upcoming" },
     { label: "Past", value: "past" },
   ];
 
+  const upcomingCount = events.filter(
+    (e) => e.status === "upcoming" || e.status === "ongoing"
+  ).length;
+
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden py-16 sm:py-20 lg:py-24">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent" />
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <span className="text-xs font-semibold uppercase tracking-wider text-primary">
-              Events
-            </span>
-            <div className="mt-3 flex items-center gap-4">
-              <h1 className="font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-                Our Events
-              </h1>
-              <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                {events.length} Events
+      <section className="relative overflow-hidden pt-24 pb-12 sm:pt-32 lg:pb-20">
+        <div
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background:
+              "radial-gradient(900px 500px at 85% 0%, hsl(var(--primary) / 0.12), transparent 60%)",
+          }}
+        />
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6">
+          <motion.div {...fadeInView}>
+            <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary">
+              00 — Events
+            </div>
+            <h1 className="mt-4 max-w-4xl font-heading text-[clamp(2.5rem,6.5vw,5.5rem)] font-black leading-[0.95] tracking-[-0.035em] text-foreground">
+              Every event, every{" "}
+              <span className="italic font-semibold text-primary">
+                cohort.
+              </span>
+            </h1>
+            <div className="mt-8 flex flex-wrap items-end justify-between gap-6 border-y border-border/60 py-4 text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
+              <span>
+                Total <strong className="ml-1 text-foreground">{events.length}</strong>
+              </span>
+              <span>
+                Upcoming{" "}
+                <strong className="ml-1 text-foreground">{upcomingCount}</strong>
+              </span>
+              <span>
+                Categories <strong className="ml-1 text-foreground">5</strong>
+              </span>
+              <span>
+                Registration{" "}
+                <strong className="ml-1 text-primary">Open</strong>
               </span>
             </div>
-            <div className="mt-4 h-1 w-16 rounded-full bg-primary" />
-            <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
-              Discover our upcoming activities and relive past experiences
-            </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Filter + Grid */}
-      <section className="py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          {/* Filter Buttons — simple button group */}
-          <div className="mb-10 flex gap-2">
-            {filters.map((f) => (
-              <button
-                key={f.value}
-                onClick={() => setFilter(f.value)}
-                className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
-                  filter === f.value
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "border border-border bg-white text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
+      {/* Filter bar */}
+      <section className="container mx-auto max-w-6xl px-4 pb-4 sm:px-6">
+        <div className="flex flex-wrap items-center gap-6 text-sm font-bold uppercase tracking-wider">
+          {filters.map((f) => (
+            <button
+              key={f.value}
+              onClick={() => setFilter(f.value)}
+              className={`transition-colors ${
+                filter === f.value
+                  ? "text-foreground underline decoration-primary decoration-2 underline-offset-[6px]"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </section>
 
-          {/* Featured upcoming event */}
-          {featuredEvent && filter !== "past" && (
-            <motion.div {...fadeInView} className="mb-10">
-              <div
-                className={`overflow-hidden rounded-xl border border-border border-t-4 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] ${
-                  categoryBorderColors[featuredEvent.category] ||
-                  "border-t-primary"
-                }`}
+      {/* Featured: Innoventure */}
+      {(filter === "all" || filter === "upcoming") && (
+        <section className="pb-10 pt-4">
+          <div className="container mx-auto max-w-6xl px-4 sm:px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.55 }}
+            >
+              <Link
+                href="/innoventure"
+                className="group relative block overflow-hidden border border-primary/25 bg-[#05110d] p-8 text-white shadow-[0_40px_80px_-30px_rgba(16,185,129,0.55)] transition-transform hover:-translate-y-1 sm:p-12"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(900px 500px at 85% 0%, rgba(16,185,129,0.4), transparent 60%), radial-gradient(600px 400px at 10% 100%, rgba(4,120,87,0.5), transparent 70%)",
+                }}
               >
-                <div className="flex flex-col gap-6 p-6 sm:flex-row sm:items-center sm:p-8">
-                  {/* Date block */}
-                  <div className="flex size-24 shrink-0 flex-col items-center justify-center rounded-xl bg-primary/10 sm:size-28">
-                    <span className="text-xs font-semibold uppercase text-primary">
-                      {formatDateShort(featuredEvent.date).month}
+                <div className="flex items-center justify-between text-[10px] font-medium uppercase tracking-[0.22em] text-white/60">
+                  <span className="flex items-center gap-2">
+                    <Sparkles className="size-3.5 text-primary" />
+                    Featured · Flagship Competition
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="size-1.5 animate-pulse rounded-full bg-primary" />
+                    Registration open
+                  </span>
+                </div>
+
+                <div className="mt-10 grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-end">
+                  <div className="font-heading text-[clamp(2.5rem,7vw,6rem)] font-black leading-[0.85] tracking-[-0.04em]">
+                    INNO
+                    <span className="block italic font-semibold text-primary">
+                      venture
                     </span>
-                    <span className="font-heading text-3xl font-bold text-primary sm:text-4xl">
-                      {formatDateShort(featuredEvent.date).day}
-                    </span>
-                    <span className="text-xs text-primary/70">
-                      {formatDateShort(featuredEvent.date).year}
+                    <span className="mt-2 block text-transparent [-webkit-text-stroke:1.5px_rgba(255,255,255,0.6)]">
+                      01.0
                     </span>
                   </div>
-
-                  {/* Content */}
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
-                          categoryBadgeColors[featuredEvent.category] ||
-                          "bg-primary/10 text-primary"
-                        }`}
-                      >
-                        {categoryLabels[featuredEvent.category] ??
-                          featuredEvent.category}
-                      </span>
-                      {featuredEvent.status === "ongoing" ? (
-                        <span className="flex items-center gap-1.5 text-xs font-medium text-primary">
-                          <Clock className="size-3" />
-                          Ongoing
-                        </span>
-                      ) : (
-                        <span className="text-xs font-medium text-primary">
-                          Upcoming
-                        </span>
-                      )}
-                    </div>
-
-                    <h3 className="mt-2 font-heading text-xl font-bold text-foreground sm:text-2xl">
-                      {featuredEvent.title}
-                    </h3>
-
-                    <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1.5">
-                        <Calendar className="size-4 text-primary/70" />
-                        {formatDate(featuredEvent.date)} &middot;{" "}
-                        {featuredEvent.time}
-                      </span>
-                      <span className="flex items-center gap-1.5">
-                        <MapPin className="size-4 text-primary/70" />
-                        {featuredEvent.location}
-                      </span>
-                      {featuredEvent.maxAttendees && (
-                        <span className="flex items-center gap-1.5">
-                          <Users className="size-4 text-primary/70" />
-                          {featuredEvent.attendees}/{featuredEvent.maxAttendees}{" "}
-                          attendees
-                        </span>
-                      )}
-                    </div>
-
-                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground line-clamp-2">
-                      {featuredEvent.description}
+                  <div className="space-y-4 text-sm text-white/80">
+                    <p className="max-w-md leading-relaxed">
+                      BUP EIC&apos;s flagship national competition — two
+                      tracks, real sponsor challenges, and a runway from idea
+                      to final showcase.
                     </p>
-
-                    {featuredEvent.registrationLink && (
-                      <div className="mt-4">
-                        <Button
-                          size="lg"
-                          className="h-11"
-                          render={
-                            <a
-                              href={featuredEvent.registrationLink}
-                              target={
-                                featuredEvent.registrationLink.startsWith(
-                                  "http"
-                                )
-                                  ? "_blank"
-                                  : undefined
-                              }
-                              rel={
-                                featuredEvent.registrationLink.startsWith(
-                                  "http"
-                                )
-                                  ? "noopener noreferrer"
-                                  : undefined
-                              }
-                            />
-                          }
-                        >
-                          Register Now
-                          <ArrowRight className="ml-2 size-4" />
-                        </Button>
-                      </div>
-                    )}
+                    <ul className="space-y-1.5 border-t border-white/10 pt-4 text-xs">
+                      <li>
+                        <strong className="text-white">Innovation Track</strong>
+                        {" "}· Case challenge → SBU Launch
+                      </li>
+                      <li>
+                        <strong className="text-white">Venture Track</strong>
+                        {" "}· Pitch deck → Final Showcase
+                      </li>
+                    </ul>
+                    <div className="flex items-center gap-2 pt-2 text-sm font-bold uppercase tracking-wider text-primary">
+                      Enter the arena
+                      <ArrowUpRight className="size-5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             </motion.div>
-          )}
-
-          {/* Events Grid */}
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {restEvents.map((event, i) => {
-              const isUpcoming =
-                event.status === "upcoming" || event.status === "ongoing";
-
-              return (
-                <motion.div
-                  key={event.id}
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.05 }}
-                  className={`flex flex-col overflow-hidden rounded-xl border border-border border-t-4 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] ${
-                    categoryBorderColors[event.category] || "border-t-primary"
-                  }`}
-                >
-                  {/* Card Body */}
-                  <div className="flex flex-1 flex-col p-5">
-                    <div className="flex items-center justify-between gap-2">
-                      <span
-                        className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
-                          categoryBadgeColors[event.category] ||
-                          "bg-primary/10 text-primary"
-                        }`}
-                      >
-                        {categoryLabels[event.category] ?? event.category}
-                      </span>
-                      {event.status === "ongoing" ? (
-                        <span className="flex items-center gap-1.5 text-xs font-medium text-primary">
-                          <Clock className="size-3" />
-                          Ongoing
-                        </span>
-                      ) : (
-                        <span
-                          className={`text-xs font-medium ${
-                            isUpcoming
-                              ? "text-primary"
-                              : "text-muted-foreground"
-                          }`}
-                        >
-                          {isUpcoming ? "Upcoming" : "Completed"}
-                        </span>
-                      )}
-                    </div>
-
-                    <h3 className="mt-3 font-heading text-lg font-semibold text-foreground line-clamp-2">
-                      {event.title}
-                    </h3>
-
-                    <div className="mt-3 space-y-2 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="size-4 shrink-0 text-primary/70" />
-                        <span>
-                          {formatDate(event.date)} &middot; {event.time}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="size-4 shrink-0 text-primary/70" />
-                        <span className="line-clamp-1">{event.location}</span>
-                      </div>
-                      {event.maxAttendees && (
-                        <div className="flex items-center gap-2">
-                          <Users className="size-4 shrink-0 text-primary/70" />
-                          <span>
-                            {event.attendees}/{event.maxAttendees} attendees
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground line-clamp-3">
-                      {event.description}
-                    </p>
-
-                    {isUpcoming && event.registrationLink && (
-                      <div className="mt-auto pt-5">
-                        <Button
-                          className="w-full"
-                          size="lg"
-                          render={
-                            <a
-                              href={event.registrationLink}
-                              target={
-                                event.registrationLink.startsWith("http")
-                                  ? "_blank"
-                                  : undefined
-                              }
-                              rel={
-                                event.registrationLink.startsWith("http")
-                                  ? "noopener noreferrer"
-                                  : undefined
-                              }
-                            />
-                          }
-                        >
-                          Register Now
-                          <ArrowRight className="ml-2 size-4" />
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-              );
-            })}
           </div>
+        </section>
+      )}
 
-          {/* Empty state */}
-          {sorted.length === 0 && (
-            <div className="mt-16 rounded-xl border border-dashed border-border bg-muted/30 py-16 text-center">
-              <Calendar className="mx-auto size-12 text-muted-foreground/40" />
+      {/* Event list */}
+      <section className="pb-24 lg:pb-32">
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6">
+          {sorted.length === 0 ? (
+            <div className="border border-dashed border-border py-20 text-center">
+              <Calendar className="mx-auto size-10 text-muted-foreground/40" />
               <p className="mt-4 text-base text-muted-foreground">
-                No events found for this filter.
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Check back later for exciting opportunities!
+                No events in this category yet
               </p>
             </div>
+          ) : (
+            <ul className="divide-y divide-border/60 border-y border-border/60">
+              {sorted.map((event, i) => {
+                const d = formatDate(event.date);
+                const href = event.registrationLink || "#";
+                const external = !!event.registrationLink?.startsWith("http");
+                const isPast = event.status === "completed";
+                return (
+                  <motion.li
+                    key={event.id}
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-60px" }}
+                    transition={{ duration: 0.45, delay: Math.min(i * 0.05, 0.3) }}
+                  >
+                    <a
+                      href={href}
+                      target={external ? "_blank" : undefined}
+                      rel={external ? "noopener noreferrer" : undefined}
+                      className={`group grid grid-cols-[80px_1fr_auto] items-center gap-6 py-8 transition-colors sm:grid-cols-[110px_1fr_auto] sm:py-10 ${
+                        isPast
+                          ? "opacity-60 hover:opacity-80"
+                          : "hover:bg-primary/[0.03]"
+                      }`}
+                    >
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-primary">
+                          {d.month}
+                        </span>
+                        <span className="font-heading text-5xl font-black leading-none tracking-[-0.03em] text-foreground sm:text-6xl">
+                          {d.day}
+                        </span>
+                        <span className="mt-1 text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
+                          {d.year}
+                        </span>
+                      </div>
+
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
+                          <span>
+                            {categoryLabels[event.category] ?? event.category}
+                          </span>
+                          {event.status === "ongoing" && (
+                            <>
+                              <span>·</span>
+                              <span className="flex items-center gap-1.5 text-primary">
+                                <span className="size-1.5 animate-pulse rounded-full bg-primary" />
+                                Live now
+                              </span>
+                            </>
+                          )}
+                          {event.status === "completed" && (
+                            <>
+                              <span>·</span>
+                              <span>Past</span>
+                            </>
+                          )}
+                        </div>
+                        <h3 className="mt-2 font-heading text-2xl font-black tracking-[-0.02em] text-foreground sm:text-3xl">
+                          {event.title}
+                        </h3>
+                        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground line-clamp-2">
+                          {event.description}
+                        </p>
+                        <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1.5">
+                            <Calendar className="size-3.5 text-primary" />
+                            {d.full}
+                          </span>
+                          <span className="flex items-center gap-1.5">
+                            <MapPin className="size-3.5 text-primary" />
+                            {event.location}
+                          </span>
+                        </div>
+                      </div>
+
+                      <ArrowUpRight className="size-6 text-muted-foreground transition-all group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-primary sm:size-9" />
+                    </a>
+                  </motion.li>
+                );
+              })}
+            </ul>
           )}
         </div>
       </section>

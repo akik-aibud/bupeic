@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm dev:*)",
+      "Bash(pnpm install:*)",
+      "Bash(grep -rEn \"emerald|#[0-9a-fA-F]{3,6}|oklch\" src/components)",
+      "Bash(ls -t /home/akik/Downloads/*.png /home/akik/Downloads/*.jpg)",
+      "Bash(ls -la public/*.png)",
+      "Bash(ls:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)",
+      "Bash(vercel ls:*)",
+      "Bash(vercel project:*)",
+      "Bash(vercel inspect:*)",
+      "Bash(vercel teams:*)",
+      "Bash(curl -sI https://bupeic.vercel.app/)",
+      "Bash(vercel link:*)",
+      "Bash(vercel --prod --yes)",
+      "Bash(vercel domains:*)",
+      "Bash(vercel alias:*)",
+      "Bash(wc:*)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}
